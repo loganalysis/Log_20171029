@@ -5,7 +5,7 @@ public class IdenticalWordRate {
 	public static int counter1 = 0;
 	public static int counter2 = 0;
 	
-	public static enum matchMethod{
+	public enum matchMethod{
 		LCS1, //第一种最长公共子序列匹配
 		LCS2, //第二种最长公共子序列匹配
 		OBO;  //一个词一个词的匹配
@@ -223,14 +223,14 @@ public class IdenticalWordRate {
 		 return result;
 	 }
 	 
-	 private static Vector<String> breakdown(String str)
-	 {
-	  Vector<String> result = new Vector<String>();
-	  String[] strs = str.split(" ");
-	  for (String s : strs)
-	   result.add(s);
-	  return result;
-	 }
+//	 private static Vector<String> breakdown(String str)
+//	 {
+//	  Vector<String> result = new Vector<String>();
+//	  String[] strs = str.split(" ");
+//	  for (String s : strs)
+//	   result.add(s);
+//	  return result;
+//	 }
 	 
 	 
 	 public static void main(String[] args) {

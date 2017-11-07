@@ -1,16 +1,9 @@
-package cn.cas.cnic.log.fileread;
+package cn.cas.cnic.test;
 
 import java.util.Vector;
 
-//import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
-
-public class MailRead extends FileRead{
-	public MailRead(String fileName) {
-		super(fileName);
-	}
-
-	@Override  //对于mail日志，必须经等于号的处理和多出的逗号的处理
-	protected Vector<String> breakdown(String str) {
+public class MethodNeededTest {
+	public static Vector<String> breakdown(String str) {
 		Vector<String> result = new Vector<String>();
 		String[] strs = str.split(" ");
 		StringBuilder sb = new StringBuilder();
@@ -29,5 +22,4 @@ public class MailRead extends FileRead{
 		}
 		return result;
 	}
-
 }

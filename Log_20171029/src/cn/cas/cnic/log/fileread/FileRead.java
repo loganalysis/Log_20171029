@@ -1,21 +1,23 @@
 package cn.cas.cnic.log.fileread;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
-
-
 
 //import ReadLog.segmentInformation;
 
 public abstract class FileRead {
 	protected String _fileName = null;  //< 用于存储文件的名字
-	protected static Vector<HashMap<segmentInformation,String>> _fileContent = new Vector<HashMap<segmentInformation,String>>();  //< 用来存储读取后文件的缓存向量，一个字符串代表一行
-	protected static Vector<Vector<String>> _logPatterns = new Vector<Vector<String>>();  //< 用来存储日志模式
-	public static enum segmentInformation {  //< 记录信息段位的枚举
+	protected Vector<HashMap<segmentInformation,String>> _fileContent = new Vector<HashMap<segmentInformation,String>>();  //< 用来存储读取后文件的缓存向量，一个字符串代表一行
+	protected Vector<Vector<String>> _logPatterns = new Vector<Vector<String>>();  //< 用来存储日志模式
+	public enum segmentInformation {  //< 记录信息段位的枚举                                         //注意：java的枚举隐式的使用了static final修饰符进行修饰！
 		time,  //< 日志的时间字符串段位的键值
 		hostName,  //< 日志的主机名字符串段位的键值
 		codeSourse,  //< 日志的代码源头字符串段位的键值
@@ -58,6 +60,54 @@ public abstract class FileRead {
 //			System.out.println("一个有"+_fileContent.size()+"，  现在处理第"+i);
 		}
 	}
+	//后面是辅助测试的共有函数
+	public int getPatternNum() {
+		return _logPatterns.size();
+	}
+	public Vector<Vector<String>> getLogPatterns() {
+		return _logPatterns;
+	}
+	public int getFileNum() {
+		return _fileContent.size();
+	}
+	public Vector<HashMap<segmentInformation,String>> getFileContent() {
+		return _fileContent;
+	}
+	public String getFileName() {
+		return _fileName;
+	}
+	/**
+	 * 将模式写入到指定文件的方法
+	 * @param fileName
+	 */
+	public void writePattern(String fileName) {
+        Iterator iterator = _logPatterns.iterator();
+        File file = new File(fileName);
+        FileWriter fw = null;
+        BufferedWriter writer = null;
+        try {
+            fw = new FileWriter(file);
+            writer = new BufferedWriter(fw);
+            while(iterator.hasNext()){
+            	Vector<String> tem = (Vector<String>)iterator.next();
+                writer.write(tem.elementAt(0));
+                writer.newLine();//换行
+            }
+            writer.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            try {
+                writer.close();
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+	    
 	/**
 	 * 构造函数
 	 * @param fileName
@@ -67,7 +117,7 @@ public abstract class FileRead {
 		readAndSave();
 	}
 	/**
-	 * 读取文件并保持内容到_fileContent变量里面的函数
+	 * 读取文件并保存内容到_fileContent变量里面的工具函数
 	 * @return
 	 */
 	private boolean readAndSave() {
@@ -100,13 +150,12 @@ public abstract class FileRead {
         }
 		return true;
 	}
-	
 	/**
 	 * 用来将一行日志分开的工具函数
 	 * @param 需要被分开的日志行：LogLine
 	 * @return 日志分开后的一个键值对：HashMap<segmentInformation,String>
 	 */
-	private static HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
+	private HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
 		String[] splitLine = LogLine.split("[ ]+");
 		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
 		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
