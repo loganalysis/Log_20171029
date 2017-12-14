@@ -31,9 +31,9 @@ public abstract class FileRead {
 	abstract protected Vector<String> breakdown(String str);
 	/**
 	 * 得到模式的方法
-	 * @param threshold
-	 * @param SI
-	 * @param MM
+	 * @param threshold  支持阈值
+	 * @param SI   需要匹配的内容的键值
+	 * @param MM   匹配的方法
 	 */
 	public void getPattern(double threshold , segmentInformation SI, IdenticalWordRate.matchMethod MM) {
 		_logPatterns.clear();
@@ -45,7 +45,7 @@ public abstract class FileRead {
 				String sourceLog = _logPatterns.get(j).get(0);
 				double rate = IdenticalWordRate.getRate(breakdown(sourceLog), breakdown(compareLog), MM);  //这里用到抽象方法！
 //				System.out.println(rate);
-				if( rate > threshold) {
+				if( rate > threshold || rate == threshold) {
 					isMatched = true;
 					_logPatterns.get(j).add(compareLog);
 					break;
@@ -155,29 +155,6 @@ public abstract class FileRead {
 	 * @param 需要被分开的日志行：LogLine
 	 * @return 日志分开后的一个键值对：HashMap<segmentInformation,String>
 	 */
-	private HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
-		String[] splitLine = LogLine.split("[ ]+");
-		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
-		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
-		//第一个到第三个小段是时间段     time
-		segment.append(splitLine[0]).append(' ').append(splitLine[1]).append(' ').append(splitLine[2]);
-		temMap.put(segmentInformation.time, segment.toString());
-		//第四小段是主机名段   hostname
-		temMap.put(segmentInformation.hostName, splitLine[3]);
-		//第五段到第一个出现的“冒号”是代码源头段  codeSourse   注意：这个段位有可能没有！！！！
-		int i = 4;
-		if(splitLine[i].endsWith(":")) {
-			temMap.put(segmentInformation.codeSourse, splitLine[i]);
-			++i;
-		}
-		//剩余的部分是需要关注分类的代码内容段    codeContent
-		segment.setLength(0);
-		while(i!=splitLine.length) {
-			segment.append(splitLine[i]).append(' ');		
-			++i;
-		}
-		temMap.put(segmentInformation.codeContent, segment.toString());
-		return temMap;
-	}
+	abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine);
 	
 }

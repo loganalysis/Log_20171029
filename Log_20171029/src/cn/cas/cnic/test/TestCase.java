@@ -83,7 +83,8 @@ public class TestCase {
 	@Test //使用不同的阈值对于cron日志进行不同的比较算法进行测试
 	public void testBiasAndAlgorithms() {
 		FormatFactory ff = new MailFactory();
-		FileRead fr = ff.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\messages-20170702");
+		FileRead fr = ff.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\maillog-20170702");
+//		FileRead fr = ff.createRead("C:\\Users\\dell\\Desktop\\NEW_PATTERN-events.log");
 		System.out.println("该文件一共有"+fr.getFileNum()+"条日志");
 		String inputFileName = fr.getFileName();
 		inputFileName = inputFileName +"分类文件";
