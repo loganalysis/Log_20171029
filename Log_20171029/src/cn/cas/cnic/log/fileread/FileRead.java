@@ -30,6 +30,12 @@ public abstract class FileRead {
 	 */
 	abstract protected Vector<String> breakdown(String str);
 	/**
+	 * 用来将一行日志分开的工具函数
+	 * @param 需要被分开的日志行：LogLine
+	 * @return 日志分开后的一个键值对：HashMap<segmentInformation,String>
+	 */
+	abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine);
+	/**
 	 * 得到模式的方法
 	 * @param threshold  支持阈值
 	 * @param SI   需要匹配的内容的键值
@@ -81,7 +87,7 @@ public abstract class FileRead {
 	 * @param fileName
 	 */
 	public void writePattern(String fileName) {
-        Iterator iterator = _logPatterns.iterator();
+        Iterator<Vector<String>> iterator = _logPatterns.iterator();
         File file = new File(fileName);
         FileWriter fw = null;
         BufferedWriter writer = null;
@@ -90,7 +96,11 @@ public abstract class FileRead {
             writer = new BufferedWriter(fw);
             while(iterator.hasNext()){
             	Vector<String> tem = (Vector<String>)iterator.next();
-                writer.write(tem.elementAt(0));
+            	if(tem.size()>1) {
+            		writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1)));   //这里生成了带有*的模式的结果
+            	}
+            	else
+            		writer.write(tem.elementAt(0));
                 writer.newLine();//换行
             }
             writer.flush();
@@ -150,11 +160,26 @@ public abstract class FileRead {
         }
 		return true;
 	}
-	/**
-	 * 用来将一行日志分开的工具函数
-	 * @param 需要被分开的日志行：LogLine
-	 * @return 日志分开后的一个键值对：HashMap<segmentInformation,String>
-	 */
-	abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine);
 	
+	private String generateLinePattern(String s1, String s2) {
+		String[] splitLine1 = s1.split("[ ]+");
+		String[] splitLine2 = s2.split("[ ]+");
+		int min = splitLine1.length<splitLine2.length?splitLine1.length:splitLine2.length;
+		int max = splitLine1.length>splitLine2.length?splitLine1.length:splitLine2.length;
+		if(splitLine1.length < splitLine2.length) {
+			String[] tem = splitLine1;
+			splitLine1 = splitLine2;
+			splitLine2 = tem;
+		}
+		
+		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
+		for(int i = 0 ; i != max; ++i ) {
+			if(i<min && !splitLine1[i].equals(splitLine2[i]))
+				segment.append("|*| ");
+			else
+				segment.append(splitLine1[i]).append(" ");
+		}
+		
+		return segment.toString();
+	}
 }

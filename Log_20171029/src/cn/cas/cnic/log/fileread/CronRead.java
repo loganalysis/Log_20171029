@@ -3,8 +3,6 @@ package cn.cas.cnic.log.fileread;
 import java.util.HashMap;
 import java.util.Vector;
 
-import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
-
 public class CronRead extends FileRead{
 	public CronRead(String fileName) {
 		super(fileName);
@@ -29,13 +27,10 @@ public class CronRead extends FileRead{
 		temMap.put(segmentInformation.time, segment.toString());
 		//第四小段是主机名段   hostname
 		temMap.put(segmentInformation.hostName, splitLine[3]);
-		//第五段到第一个出现的“冒号”是代码源头段  codeSourse   注意：这个段位有可能没有！！！！
-		int i = 4;
-		if(splitLine[i].endsWith(":")) {
-			temMap.put(segmentInformation.codeSourse, splitLine[i]);
-			++i;
-		}
+		//第五段到第一个出现的“冒号”是代码源头段  codeSourse   注意：这个段位对于Cron日志来说，必定有，但是最后可能不是冒号结束
+		temMap.put(segmentInformation.codeSourse, splitLine[4]);
 		//剩余的部分是需要关注分类的代码内容段    codeContent
+		int i = 5;
 		segment.setLength(0);
 		while(i!=splitLine.length) {
 			segment.append(splitLine[i]).append(' ');		

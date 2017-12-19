@@ -1,0 +1,34 @@
+package cn.cas.cnic.test;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import cn.cas.cnic.log.fileread.FileRead;
+import cn.cas.cnic.log.formatfactory.FormatFactory;
+
+public class TestCaseNewOne {
+	@Before
+	public void prepare(){
+        System.out.println(" 开始进行测试：");
+    }
+	@After
+    public void destroy(){
+        System.out.println(" 测试结束！");
+    }
+	@Test //测试Cron日志
+	public void testCron() throws Exception {
+		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170702";
+		String className = fileName.substring(fileName.lastIndexOf("\\")+1,fileName.indexOf("-"));
+		className = className.substring(0, 1).toUpperCase() + className.substring(1);
+		className += "Factory";
+		className = "cn.cas.cnic.log.formatfactory."+className;
+		System.out.println(className);
+		Class<?> c =Class.forName(className);  
+		FormatFactory ff = (FormatFactory)c.newInstance();
+		FileRead fr = ff.createRead(fileName);
+		
+		System.out.println(fr.toString());
+		
+	}
+}

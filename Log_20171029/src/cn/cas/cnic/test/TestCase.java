@@ -14,7 +14,7 @@ import cn.cas.cnic.log.fileread.IdenticalWordRate;
 import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
 import cn.cas.cnic.log.formatfactory.CronFactory;
 import cn.cas.cnic.log.formatfactory.FormatFactory;
-import cn.cas.cnic.log.formatfactory.MailFactory;
+import cn.cas.cnic.log.formatfactory.MaillogFactory;
 
 public class TestCase {
 	@Before
@@ -38,7 +38,7 @@ public class TestCase {
 	}
 //	@Test   //测试MailRead
 	public void testMailRead() {
-		FormatFactory ff = new MailFactory();
+		FormatFactory ff = new MaillogFactory();
 //		FormatFactory ff = new CronFactory();
 		FileRead fr = ff.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\maillog-20170702");
 		fr.getPattern(0.5, FileRead.segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS1);
@@ -46,7 +46,7 @@ public class TestCase {
 	}
 //	@Test //测试breakdown函数
 	public void testBreakdown() {
-		FormatFactory ff = new MailFactory();
+		FormatFactory ff = new MaillogFactory();
 		FileRead fr = ff.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\maillog-20170702");
 		Vector<HashMap<segmentInformation,String>> fileContent = fr.getFileContent();
 		for(int i = 0 ; i != fileContent.size()/120 ; ++i) {
@@ -80,9 +80,9 @@ public class TestCase {
 		System.out.println(fileName+"\\"+result+".txt");
 	}
 	
-	@Test //使用不同的阈值对于cron日志进行不同的比较算法进行测试
+//	@Test //使用不同的阈值对于cron日志进行不同的比较算法进行测试
 	public void testBiasAndAlgorithms() {
-		FormatFactory ff = new MailFactory();
+		FormatFactory ff = new MaillogFactory();
 		FileRead fr = ff.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\maillog-20170702");
 //		FileRead fr = ff.createRead("C:\\Users\\dell\\Desktop\\NEW_PATTERN-events.log");
 		System.out.println("该文件一共有"+fr.getFileNum()+"条日志");
@@ -126,10 +126,29 @@ public class TestCase {
 		fr.writePattern("F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170702.txt");
 	}
 	
+	@Test  //测试反射---得出结论：反射必须使用全名！！！！！！
+	public void testReflect() throws Exception {
+		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\maillog-20170702";
+		String className = fileName.substring(fileName.lastIndexOf("\\")+1,fileName.indexOf("-"));
+		className = className.substring(0, 1).toUpperCase() + className.substring(1);
+		className += "Factory";
+		className = "cn.cas.cnic.log.formatfactory."+className;
+		
+		System.out.println(className);
+		
+		Class<?> c =Class.forName(className);  
+		FormatFactory ff = (FormatFactory)c.newInstance();
+		
+		FileRead fr = ff.createRead(fileName);
+		
+		
+		System.out.println(fr.toString());
+	}
+	
 //	@Test  //直接按照空格分开和根据“=”分开的mail/messages日志进行对比
 	public void testMailWithDifMeth() {
 		FormatFactory ff_cron = new CronFactory();
-		FormatFactory ff_mail = new MailFactory();
+		FormatFactory ff_mail = new MaillogFactory();
 		FileRead fr_cron = ff_cron.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\messages-20170702");
 		FileRead fr_mail = ff_mail.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\messages-20170702");
 		System.out.println("该Messages文件一共有"+fr_cron.getFileNum()+"条日志");

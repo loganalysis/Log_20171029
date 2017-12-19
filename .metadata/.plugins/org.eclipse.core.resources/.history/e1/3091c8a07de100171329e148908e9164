@@ -1,0 +1,24 @@
+package cn.cas.cnic.log.fileread;
+
+import java.util.HashMap;
+import java.util.Vector;
+
+import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
+
+public class SecureRead extends FileRead{
+	public SecureRead(String FileName) {
+		super(FileName);
+	}
+	
+	@Override
+	protected Vector<String> breakdown(String str) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	protected HashMap<segmentInformation, String> dealLogByLine(String LogLine) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

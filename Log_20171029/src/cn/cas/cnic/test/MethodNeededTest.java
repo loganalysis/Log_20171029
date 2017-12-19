@@ -22,4 +22,27 @@ public class MethodNeededTest {
 		}
 		return result;
 	}
+	
+	public static String generateLinePattern(String s1, String s2) {
+		String[] splitLine1 = s1.split("[ ]+");
+		String[] splitLine2 = s2.split("[ ]+");
+		int min = splitLine1.length<splitLine2.length?splitLine1.length:splitLine2.length;
+		int max = splitLine1.length>splitLine2.length?splitLine1.length:splitLine2.length;
+		if(splitLine1.length < splitLine2.length) {
+			String[] tem = splitLine1;
+			splitLine1 = splitLine2;
+			splitLine2 = tem;
+		}
+		
+		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
+		for(int i = 0 ; i != max; ++i ) {
+			if(i<min && !splitLine1[i].equals(splitLine2[i]))
+				segment.append("* ");
+			else
+				segment.append(splitLine1[i]).append(" ");
+		}
+		
+		return segment.toString();
+	}
+	
 }

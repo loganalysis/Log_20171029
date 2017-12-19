@@ -1,0 +1,20 @@
+package cn.cas.cnic.test;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestCaseNewOne {
+	@Before
+	public void prepare(){
+        System.out.println(" 开始进行测试：");
+    }
+	@After
+    public void destroy(){
+        System.out.println(" 测试结束！");
+    }
+	@Test
+	public void testCron() {
+		
+	}
+}
