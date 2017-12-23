@@ -12,12 +12,8 @@
 <fullyQualifiedTypeName name="cn.cas.cnic.log.LogProcess"/>
 <fullyQualifiedTypeName name="java.io.FileReader"/>
 <fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.IdenticalWordRate"/>
-<fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.IdenticalWordRate.matchMethod"/>
 <fullyQualifiedTypeName name="cn.cas.cnic.log.formatfactory.MailFactory"/>
-<fullyQualifiedTypeName name="cn.cas.cnic.test.MethodNeededTest"/>
-<fullyQualifiedTypeName name="java.util.Vector"/>
 <fullyQualifiedTypeName name="java.lang.StringBuilder"/>
-<fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.FileRead.segmentInformation"/>
 <fullyQualifiedTypeName name="org.junit.Before"/>
 <fullyQualifiedTypeName name="org.junit.After"/>
 <fullyQualifiedTypeName name="cn.cas.cnic.log.formatfactory.CronFactory"/>
@@ -27,11 +23,22 @@
 <fullyQualifiedTypeName name="java.io.FileNotFoundException"/>
 <fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="java.io.Console"/>
-<fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="cn.cas.cnic.log.formatfactory.FormatFactory"/>
-<fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.FileRead"/>
 <fullyQualifiedTypeName name="java.lang.Override"/>
 <fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.MessagesRead"/>
 <fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.SecureRead"/>
 <fullyQualifiedTypeName name="org.junit.Test"/>
+<fullyQualifiedTypeName name="org.apache.spark.sql.SQLContext."/>
+<fullyQualifiedTypeName name="org.apache.spark.sql.SparkSession."/>
+<fullyQualifiedTypeName name="org.apache.spark.sql.SparkSession"/>
+<fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.FileRead"/>
+<fullyQualifiedTypeName name="cn.cas.cnic.test.MethodNeededTest"/>
+<fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.FileRead.segmentInformation"/>
+<fullyQualifiedTypeName name="java.util.Collection"/>
+<fullyQualifiedTypeName name="java.util.Collections"/>
+<fullyQualifiedTypeName name="java.util.Comparator"/>
+<fullyQualifiedTypeName name="cn.cas.cnic.log.logpattern.LCS"/>
+<fullyQualifiedTypeName name="cn.cas.cnic.log.fileread.IdenticalWordRate.matchMethod"/>
+<fullyQualifiedTypeName name="java.util.Vector"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
 </qualifiedTypeNameHistroy>

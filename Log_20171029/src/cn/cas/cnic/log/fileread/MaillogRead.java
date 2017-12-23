@@ -23,7 +23,7 @@ public class MaillogRead extends FileRead{
 				sb.setLength(0);
 				sb.append(strArray[0]).append("=");
 				result.add(sb.toString());   
-				result.add(strArray[1]);
+//				result.add(strArray[1]);    //maillog分类比较多，直接将等号后面的删除进行分类
 			}else {
 				result.add(s);
 			}
@@ -47,18 +47,21 @@ public class MaillogRead extends FileRead{
 			temMap.put(segmentInformation.codeSourse, splitLine[i]);
 			++i;
 		}
-		//剩余的部分是需要关注分类的代码内容段    codeContent  下面的就将=号分开！！
+		//剩余的部分是需要关注分类的代码内容段    codeContent  
 		segment.setLength(0);
 		while(i!=splitLine.length) {
-			String s = splitLine[i];
-			if(s.endsWith(",") || s.endsWith(":"))
-				s = s.substring(0, s.length()-1);
-			String[] strArray = s.split("=");
-			if(strArray.length == 2) {
-				segment.append(strArray[0]).append("= ").append(strArray[1]).append(' ');
-			}else {
-				segment.append(splitLine[i]).append(' ');
-			}
+			//下面的就将=号分开！！  感觉开始做不好，存储的时候还是原来的内容比较好，因此注释掉
+//			String s = splitLine[i];
+//			if(s.endsWith(",") || s.endsWith(":"))
+//				s = s.substring(0, s.length()-1);
+//			String[] strArray = s.split("=");
+//			if(strArray.length == 2) {
+//				segment.append(strArray[0]).append("= ").append(strArray[1]).append(' ');
+//			}else {
+//				segment.append(splitLine[i]).append(' ');
+//			}
+//			++i;
+			segment.append(splitLine[i]).append(' ');		
 			++i;
 		}
 		temMap.put(segmentInformation.codeContent, segment.toString());

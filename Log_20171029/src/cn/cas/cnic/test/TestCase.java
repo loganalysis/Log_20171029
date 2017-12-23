@@ -1,6 +1,5 @@
 package cn.cas.cnic.test;
 
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
@@ -16,6 +15,12 @@ import cn.cas.cnic.log.formatfactory.CronFactory;
 import cn.cas.cnic.log.formatfactory.FormatFactory;
 import cn.cas.cnic.log.formatfactory.MaillogFactory;
 
+
+/**
+ * 测试案例
+ * @author dell
+ * 该测试案例包括对文件读取并分类的结果
+ */
 public class TestCase {
 	@Before
 	public void prepare(){

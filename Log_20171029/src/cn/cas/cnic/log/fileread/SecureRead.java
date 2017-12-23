@@ -21,7 +21,7 @@ public class SecureRead extends FileRead{
 				sb.setLength(0);
 				sb.append(strArray[0]).append("=");
 				result.add(sb.toString());   
-				result.add(strArray[1]);
+//				result.add(strArray[1]);
 			}else {
 				result.add(s);
 			}

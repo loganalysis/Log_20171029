@@ -1,6 +1,8 @@
 package cn.cas.cnic.log.fileread;
 import java.util.Vector;
 
+
+
 public class IdenticalWordRate {
 	public static int counter1 = 0;
 	public static int counter2 = 0;
@@ -8,7 +10,8 @@ public class IdenticalWordRate {
 	public enum matchMethod{
 		LCS1, //第一种最长公共子序列匹配
 		LCS2, //第二种最长公共子序列匹配
-		OBO;  //一个词一个词的匹配
+		OBO,  //一个词一个词的匹配
+		LCSNew;  //最新的LCS方法
 	}
 	
 	 /**
@@ -31,10 +34,14 @@ public class IdenticalWordRate {
 		 case OBO:
 			 v3 = getOBO(a,b);
 			 break;
+		 case LCSNew:
+			 v3 = cn.cas.cnic.log.logpattern.LCS.getLCS(a,b);
+			 break;
 		 }
-		 
-//		 System.out.println(v3.size());
-		 
+//		 System.out.println(a);
+//		 System.out.println(b);
+//		 System.out.println(v3);
+ 
 		 double rate = v3.size()*2.0/(a.size()+b.size()); 
 		 return rate;
 	 }
@@ -223,21 +230,29 @@ public class IdenticalWordRate {
 		 return result;
 	 }
 	 
-//	 private static Vector<String> breakdown(String str)
-//	 {
-//	  Vector<String> result = new Vector<String>();
-//	  String[] strs = str.split(" ");
-//	  for (String s : strs)
-//	   result.add(s);
-//	  return result;
-//	 }
+	 private static Vector<String> breakdown(String str)
+	 {
+	  Vector<String> result = new Vector<String>();
+	  String[] strs = str.split(" ");
+	  for (String s : strs)
+	   result.add(s);
+	  return result;
+	 }
 	 
 	 
 	 public static void main(String[] args) {
 		
 //		  Vector<String> a = breakdown("Invalid user admin from 195.154.33.138");
 //		  Vector<String> b = breakdown("Failed password for invalid user admin from 195.154.33.138 port 52056 ssh2");
-//		  Vector<String> v3 = getLCS1(a,b);
+		 
+		 Vector<String> a = breakdown("a c");
+			Vector<String> b = breakdown("d");
+		  Vector<String> v3 = getLCS1(a,b);
+		  
+		  v3.add("a");
+		  
+		  System.out.println(v3);
+		  
 //		  System.out.println(""+v3.size()+" :: "+v3.toString());
 //		  if (v3.size()*4 >= (a.size()+a.size()))
 //		   System.out.println("same pattern");

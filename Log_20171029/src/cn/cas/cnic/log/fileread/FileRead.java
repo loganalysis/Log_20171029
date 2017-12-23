@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -87,20 +90,36 @@ public abstract class FileRead {
 	 * @param fileName
 	 */
 	public void writePattern(String fileName) {
-        Iterator<Vector<String>> iterator = _logPatterns.iterator();
+		//写之前我先将日志模式按照数目大小拍一下序
+		Collections.sort(_logPatterns,new Comparator<Vector<String>>() {
+            public int compare(Vector<String> left, Vector<String> right) {
+                return (right.size()-left.size());
+            }
+        });
+		
         File file = new File(fileName);
         FileWriter fw = null;
         BufferedWriter writer = null;
         try {
             fw = new FileWriter(file);
             writer = new BufferedWriter(fw);
-            while(iterator.hasNext()){
-            	Vector<String> tem = (Vector<String>)iterator.next();
+            for(int i = 0 ; i != _logPatterns.size() ; ++i) {
+            	Vector<String> tem = _logPatterns.elementAt(i);
+            	writer.write("总共有："+_logPatterns.size()+"个日志模式"+"     现在是第："+(i+1)+"个模式");
+            	writer.newLine();
             	if(tem.size()>1) {
-            		writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1)));   //这里生成了带有*的模式的结果
+            		writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1),"="));   //这里生成了带有*的模式的结果,而且结果对于=号进行了分开
             	}
             	else
             		writer.write(tem.elementAt(0));
+            	writer.newLine();
+            	writer.write("——————该模式包含日志条数："+tem.size()+"   占总文件的："+tem.size()*100.0/_fileContent.size()+"%"+"   分别是：");
+            	writer.newLine();
+            	for(int j = 0; j != tem.size() ; ++j) {
+            		writer.write(tem.elementAt(j));
+            		writer.newLine();
+            	}
+            	writer.write("*******************************");
                 writer.newLine();//换行
             }
             writer.flush();
@@ -117,7 +136,37 @@ public abstract class FileRead {
             }
         }
     }
-	    
+	/**
+	 * 根据段信息的键写值到文件中的函数
+	 * @param fileName
+	 * @param SI
+	 */
+	public void writeContentBySegment(String fileName, segmentInformation SI) {
+		Iterator<HashMap<segmentInformation,String>> iterator = _fileContent.iterator();
+        File file = new File(fileName);
+        FileWriter fw = null;
+        BufferedWriter writer = null;
+        try {
+            fw = new FileWriter(file);
+            writer = new BufferedWriter(fw);
+            while(iterator.hasNext()){
+            	writer.write(iterator.next().get(SI));
+                writer.newLine();//换行
+            }
+            writer.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            try {
+                writer.close();
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+	}
 	/**
 	 * 构造函数
 	 * @param fileName
@@ -160,8 +209,13 @@ public abstract class FileRead {
         }
 		return true;
 	}
-	
-	private String generateLinePattern(String s1, String s2) {
+	/**
+	 * 根据输出的两个字符串来生成日志模式的函数
+	 * @param s1
+	 * @param s2
+	 * @return
+	 */
+	public static String generateLinePattern(String s1, String s2, String reg) {
 		String[] splitLine1 = s1.split("[ ]+");
 		String[] splitLine2 = s2.split("[ ]+");
 		int min = splitLine1.length<splitLine2.length?splitLine1.length:splitLine2.length;
@@ -174,8 +228,18 @@ public abstract class FileRead {
 		
 		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
 		for(int i = 0 ; i != max; ++i ) {
-			if(i<min && !splitLine1[i].equals(splitLine2[i]))
-				segment.append("|*| ");
+			if(i<min && !splitLine1[i].equals(splitLine2[i])) {
+				if(reg.length() == 0) {
+					segment.append("|*| ");
+				}
+				else {
+					String[] regSplit=splitLine1[i].split(reg);
+					if(regSplit.length == 1)
+						segment.append("|*| ");
+					else if(regSplit.length > 1)
+						segment.append(regSplit[0]).append(reg).append("|*| ");
+				}
+			}
 			else
 				segment.append(splitLine1[i]).append(" ");
 		}
