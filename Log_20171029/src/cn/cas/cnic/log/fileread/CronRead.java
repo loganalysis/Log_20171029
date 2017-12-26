@@ -17,7 +17,7 @@ public class CronRead extends FileRead{
 		return result;
 	}
 	
-	@Override //对于Cron类的日志分类，第四个标签最好可能没有分号！
+	@Override //对于Cron类的日志分类，第四个标签最后可能没有分号！
 	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
 		String[] splitLine = LogLine.split("[ ]+");
 		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();

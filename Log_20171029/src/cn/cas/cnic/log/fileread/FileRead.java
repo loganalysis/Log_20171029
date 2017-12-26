@@ -29,7 +29,7 @@ public abstract class FileRead {
 	/**
 	 * 用来拆分字符串的抽象方法，需要根据不同格式来定义
 	 * @param s
-	 * @return
+	 * @return 返回拆分后的单个字符串组成的字符串向量
 	 */
 	abstract protected Vector<String> breakdown(String str);
 	/**
@@ -39,7 +39,15 @@ public abstract class FileRead {
 	 */
 	abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine);
 	/**
-	 * 得到模式的方法
+	 * 构造函数
+	 * @param fileName
+	 */
+	public FileRead(String fileName) {
+		_fileName = fileName;
+		readAndSave();
+	}
+	/**
+	 * 根据传入的文件生成模式的方法
 	 * @param threshold  支持阈值
 	 * @param SI   需要匹配的内容的键值
 	 * @param MM   匹配的方法
@@ -69,7 +77,7 @@ public abstract class FileRead {
 //			System.out.println("一个有"+_fileContent.size()+"，  现在处理第"+i);
 		}
 	}
-	//后面是辅助测试的共有函数
+	//后面是辅助测试的公有函数
 	public int getPatternNum() {
 		return _logPatterns.size();
 	}
@@ -90,7 +98,7 @@ public abstract class FileRead {
 	 * @param fileName
 	 */
 	public void writePattern(String fileName) {
-		//写之前我先将日志模式按照数目大小拍一下序
+		//写之前我先将日志模式按照数目大小排一下序
 		Collections.sort(_logPatterns,new Comparator<Vector<String>>() {
             public int compare(Vector<String> left, Vector<String> right) {
                 return (right.size()-left.size());
@@ -168,12 +176,88 @@ public abstract class FileRead {
         }
 	}
 	/**
-	 * 构造函数
-	 * @param fileName
+	 * 模式持久化日志模式的函数，测试时公有，最后要变成私有！！！！！！！！******************
 	 */
-	public FileRead(String fileName) {
-		_fileName = fileName;
-		readAndSave();
+	public void PatternPersistence() {
+		String FileClassName = _fileName.substring(_fileName.lastIndexOf("\\")+1,_fileName.indexOf("-"));
+		FileClassName = FileClassName.substring(0, 1).toUpperCase() + FileClassName.substring(1);
+		String PersistenceName = _fileName.substring(0,_fileName.lastIndexOf("\\")+1) + FileClassName + "Persistecne";
+		//如果没有文件夹，先新建一个文件夹
+		File dir = new File(PersistenceName);  
+		if (!dir.exists())
+			dir.mkdir();
+		//然后再将文件名加入
+		PersistenceName = PersistenceName + "\\" + FileClassName + "Pattern.txt";
+		System.out.println(PersistenceName);
+		
+		File file = new File(PersistenceName);
+		FileWriter fw = null;
+        BufferedWriter writer = null;
+        try {
+            fw = new FileWriter(file);
+            writer = new BufferedWriter(fw);
+            for(int i = 0 ; i != _logPatterns.size() ; ++i) {
+            	Vector<String> tem = _logPatterns.elementAt(i);
+            	if(tem.size()>1) {
+            		writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1),"="));   //这里生成了带有*的模式的结果,而且结果对于=号进行了分开
+            	}
+            	else
+            		writer.write(tem.elementAt(0));
+                writer.newLine();//换行
+            }
+            writer.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            try {
+                writer.close();
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+	}
+	/**
+	 * 模式反持久化日志模式的函数，测试时公有，最后要变成私有！！！！！！！！******************
+	 */
+	public void PatternUnpersistence() {
+		String FileClassName = _fileName.substring(_fileName.lastIndexOf("\\")+1,_fileName.indexOf("-"));
+		FileClassName = FileClassName.substring(0, 1).toUpperCase() + FileClassName.substring(1);
+		String PersistenceName = _fileName.substring(0,_fileName.lastIndexOf("\\")+1) + FileClassName + "Persistecne";
+		PersistenceName = PersistenceName + "\\" + FileClassName + "Pattern.txt";
+		System.out.println(PersistenceName);
+		
+		File file = new File(PersistenceName);
+		if(file.exists()) {
+			System.out.println("存在文件"+file.getName());
+			BufferedReader reader = null;
+	        try {
+//			            System.out.println("以行为单位读取文件内容，一次读一整行：");
+	            reader = new BufferedReader(new FileReader(file));
+	            String tempString = null;
+//			            int line = 1;
+	            // 一次读入一行，直到读入null为文件结束
+	            while ((tempString = reader.readLine()) != null) {
+	            	//System.out.println("line " + line + ": " + tempString);  //< 显示行号
+	            	Vector<String> temVector = new Vector<String>();
+	            	temVector.add(tempString);
+	            	_logPatterns.add(temVector);
+	            	//line++;
+	            }
+	            reader.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } finally {
+	            if (reader != null) {
+	                try {
+	                    reader.close();
+	                } catch (IOException e1) {
+	                }
+	            }
+	        }
+		}
 	}
 	/**
 	 * 读取文件并保存内容到_fileContent变量里面的工具函数
@@ -213,9 +297,9 @@ public abstract class FileRead {
 	 * 根据输出的两个字符串来生成日志模式的函数
 	 * @param s1
 	 * @param s2
-	 * @return
+	 * @return 匹配后的字符串
 	 */
-	public static String generateLinePattern(String s1, String s2, String reg) {
+	private static String generateLinePattern(String s1, String s2, String reg) {
 		String[] splitLine1 = s1.split("[ ]+");
 		String[] splitLine2 = s2.split("[ ]+");
 		int min = splitLine1.length<splitLine2.length?splitLine1.length:splitLine2.length;
@@ -246,4 +330,5 @@ public abstract class FileRead {
 		
 		return segment.toString();
 	}
+	
 }

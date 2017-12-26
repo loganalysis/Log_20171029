@@ -36,9 +36,9 @@ public class TestCaseNewOne {
 		
 	}
 	
-	@Test //测试Cron日志，这里使用了反射技术
+//	@Test //测试Cron日志，这里使用了反射技术
 	public void testCron() throws Exception {
-		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170702";
+		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\messages-20170702";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		
 //		System.out.println(fr.toString());
@@ -105,7 +105,15 @@ public class TestCaseNewOne {
 		
 		System.out.println(MethodNeededTest.generateLinePattern(s1,s2,"="));
 		
-		
-		
+	}
+	
+	@Test
+	public void testPersistence() {
+		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170702";
+		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
+//		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
+//		fr.PatternPersistence();
+		fr.PatternUnpersistence();
+		System.out.println(fr.getPatternNum());
 	}
 }
