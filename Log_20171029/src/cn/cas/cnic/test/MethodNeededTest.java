@@ -1,5 +1,11 @@
 package cn.cas.cnic.test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import cn.cas.cnic.log.fileread.FileRead;
@@ -31,7 +37,6 @@ public class MethodNeededTest {
 		}
 		return ff.createRead(fileName);
 	}
-	
 	
 	public static Vector<String> breakdown(String str) {
 		Vector<String> result = new Vector<String>();
@@ -85,4 +90,21 @@ public class MethodNeededTest {
 		return segment.toString();
 	}
 	
+	public final static Map MonthMap = new HashMap<String,Integer>() {{    
+	    put("Jun", 1);    put("Feb", 2);    put("Mar", 3);
+	    put("Apr", 4);	  put("May", 5);    put("Jun", 6);
+	    put("Jul", 7);	  put("Aug", 8);    put("Sep", 9);
+	    put("Oct", 10);	  put("Nov", 11);    put("Dec", 12);
+	}};
+	public static void showTime(String time1, String time2) throws ParseException {
+		String t1,t2;
+		t1 = 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM dd HH:mm:ss");
+        long t1l = simpleDateFormat.parse(time1).getTime();
+        t1 = String.valueOf(t1l);
+        long t2l = simpleDateFormat.parse(time2).getTime();
+        t2 = String.valueOf(t2l);
+        System.out.println(t1+"\t"+t2+"\t"+(t2l-t1l));
+//        return res;
+	}
 }

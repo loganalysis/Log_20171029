@@ -1,6 +1,7 @@
 package cn.cas.cnic.test;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.Vector;
 
 import org.junit.After;
@@ -107,13 +108,18 @@ public class TestCaseNewOne {
 		
 	}
 	
-	@Test
+//	@Test
 	public void testPersistence() {
-		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170702";
+		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170723";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
-//		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
+		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
 //		fr.PatternPersistence();
-		fr.PatternUnpersistence();
+//		fr.PatternUnpersistence();
 		System.out.println(fr.getPatternNum());
+	}
+	
+	@Test  //测试时间戳和时间转化函数
+	public void testTime() throws ParseException {
+		MethodNeededTest.showTime("12 2 3:19:03", "12 2 3:19:03");
 	}
 }
