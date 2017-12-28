@@ -110,7 +110,7 @@ public class TestCaseNewOne {
 	
 //	@Test
 	public void testPersistence() {
-		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170723";
+		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\secure-20170723";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
 //		fr.PatternPersistence();
@@ -120,6 +120,8 @@ public class TestCaseNewOne {
 	
 	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-		MethodNeededTest.showTime("12 2 3:19:03", "12 2 3:19:03");
+		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170723";
+		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
+		fr.GenerateFeatureVector(null, 0);
 	}
 }

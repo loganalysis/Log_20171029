@@ -96,15 +96,18 @@ public class MethodNeededTest {
 	    put("Jul", 7);	  put("Aug", 8);    put("Sep", 9);
 	    put("Oct", 10);	  put("Nov", 11);    put("Dec", 12);
 	}};
-	public static void showTime(String time1, String time2) throws ParseException {
-		String t1,t2;
-		t1 = 
+	public static long showTime(String time1, String time2) throws ParseException {
+		String t1Str[] = time1.split(" ");
+		String t2Str[] = time2.split(" ");
+		String time11 = MonthMap.get(t1Str[0]) + " " +t1Str[1] +  " "  + t1Str[2];
+		String time22 = MonthMap.get(t2Str[0]) + " " +t2Str[1] +  " "  + t2Str[2];
+		
+		System.out.println(time11+"\t"+time22);
+		
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM dd HH:mm:ss");
-        long t1l = simpleDateFormat.parse(time1).getTime();
-        t1 = String.valueOf(t1l);
-        long t2l = simpleDateFormat.parse(time2).getTime();
-        t2 = String.valueOf(t2l);
-        System.out.println(t1+"\t"+t2+"\t"+(t2l-t1l));
-//        return res;
+        long t1l = simpleDateFormat.parse(time11).getTime();
+        long t2l = simpleDateFormat.parse(time22).getTime();
+//        System.out.println(t1+"\t"+t2+"\t"+(t2l-t1l));
+        return t2l-t1l;
 	}
 }

@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,14 +15,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+import cn.cas.cnic.log.assistent.TimeOfLog;
+
 //import ReadLog.segmentInformation;
 
 public abstract class FileRead {
 	protected String _fileName = null;  //< 用于存储文件的名字
+	protected double _threshold = 0.5;  //< 用于存储日志模式比对的阈值
 	protected Vector<HashMap<segmentInformation,String>> _fileContent = new Vector<HashMap<segmentInformation,String>>();  //< 用来存储读取后文件的缓存向量，一个字符串代表一行
 	protected Vector<Vector<String>> _logPatterns = new Vector<Vector<String>>();  //< 用来存储日志模式
 	public enum segmentInformation {  //< 记录信息段位的枚举                                         //注意：java的枚举隐式的使用了static final修饰符进行修饰！
 		time,  //< 日志的时间字符串段位的键值
+		timeStamp,  //< 日志时间戳的键值，这个段位需要自己开始时加入
 		hostName,  //< 日志的主机名字符串段位的键值
 		codeSourse,  //< 日志的代码源头字符串段位的键值
 		codeContent;   //< 日志的代码日志内容字符串段位的键值
@@ -53,6 +58,7 @@ public abstract class FileRead {
 	 * @param MM   匹配的方法
 	 */
 	public void getPattern(double threshold , segmentInformation SI, IdenticalWordRate.matchMethod MM) {
+		_threshold = threshold;
 		_logPatterns.clear();
 		PatternUnpersistence();  //进行模式反持久化****************测试阶段函数
 		for(int i = 0 ; i != _fileContent.size() ; ++i) {
@@ -180,9 +186,25 @@ public abstract class FileRead {
 	/**
 	 * 根据时间段生成特征向量的函数
 	 * @param fileName
-	 * @param time
+	 * @param time  单位是毫秒
+	 * @throws ParseException 
 	 */
-	public void GenerateFeatureVector(String fileName, double time) {
+	public void GenerateFeatureVector(String fileName, long time) throws ParseException {
+		//第一步：写之前我先将日志模式按照数目大小排一下序
+		Collections.sort(_fileContent,new Comparator<HashMap<segmentInformation, String>>() {
+            public int compare(HashMap<segmentInformation, String> left, HashMap<segmentInformation, String> right) {
+            	Long leftLong = Long.valueOf(left.get(segmentInformation.timeStamp));
+            	Long rightLong = Long.valueOf(right.get(segmentInformation.timeStamp));
+            	return (int)(leftLong - rightLong);
+            }
+        });
+		
+//		for(int i = 0 ; i != _fileContent.size()-1; ++ i) {  //这个循环测试每个日志输出的时间
+//			TimeOfLog.timeInterval(_fileContent.get(i).get(segmentInformation.time),
+//								   _fileContent.get(i+1).get(segmentInformation.time));
+//		}
+		
+		//第二步：遍历整个日志，根据时间间隔将日志分开
 		
 	}
 	/**
