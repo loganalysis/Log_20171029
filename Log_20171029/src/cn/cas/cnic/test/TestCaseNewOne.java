@@ -1,7 +1,9 @@
 package cn.cas.cnic.test;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.junit.After;
@@ -122,6 +124,15 @@ public class TestCaseNewOne {
 	public void testTime() throws ParseException {
 		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170723";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
-		fr.GenerateFeatureVector(null, 0);
+		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
+		fr.GenerateFeatureVector(null, 100000000);
 	}
+	
+//	@Test
+	public void TestLongArray() {
+		double[]  a = new double[10];
+		a[1] = 2;
+		System.out.println(Arrays.toString(a));
+ 	}
+	
 }

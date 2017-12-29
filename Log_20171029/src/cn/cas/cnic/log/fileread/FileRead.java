@@ -8,12 +8,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+
+import javax.swing.text.Segment;
 
 import cn.cas.cnic.log.assistent.TimeOfLog;
 
@@ -29,7 +32,8 @@ public abstract class FileRead {
 		timeStamp,  //< 日志时间戳的键值，这个段位需要自己开始时加入
 		hostName,  //< 日志的主机名字符串段位的键值
 		codeSourse,  //< 日志的代码源头字符串段位的键值
-		codeContent;   //< 日志的代码日志内容字符串段位的键值
+		codeContent,   //< 日志的代码日志内容字符串段位的键值
+		logPatternNum;  //< 用来存储一条日志对于的类型号
 	}
 	/**
 	 * 用来拆分字符串的抽象方法，需要根据不同格式来定义
@@ -72,6 +76,7 @@ public abstract class FileRead {
 				if( rate > threshold || rate == threshold) {
 					isMatched = true;
 					_logPatterns.get(j).add(compareLog);
+					_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(j));  //设置第i个数据的模式   2017-12-29
 					break;
 				}
 			}
@@ -79,6 +84,7 @@ public abstract class FileRead {
 				Vector<String> temStr = new Vector<String>();
 				temStr.add(compareLog);
 				_logPatterns.add(temStr);
+				_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(_logPatterns.size()));  //设置第i个数据的模式   2017-12-29
 //				System.out.println("增加了一个模式，现在模式有"+logPatterns.size());
 			}
 //			System.out.println("一个有"+_fileContent.size()+"，  现在处理第"+i);
@@ -205,7 +211,32 @@ public abstract class FileRead {
 //		}
 		
 		//第二步：遍历整个日志，根据时间间隔将日志分开
+		Vector<double[]> inputMatirx = new Vector<double[]>();
+		double[] temSave = new double[_logPatterns.size()];
+		long initTime = Long.valueOf(_fileContent.get(0).get(segmentInformation.timeStamp));
+		for(int i = 0 ; i != _fileContent.size()-1 ; ++i) {
+			if( (Long.valueOf(_fileContent.get(i).get(segmentInformation.timeStamp))-initTime) < time) {
+				//如果时间不到设定值，则对应类型加一
+//				System.out.println(_fileContent.get(i).get(segmentInformation.logPatternNum));
+				temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]++;
+//				System.out.println(temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]);
+			}else {
+				//如果时间到了，就增加一个向量，然后就可以新建一个向量了！
+				System.out.println(temSave[25]);
+				inputMatirx.addElement(temSave);
+				temSave = new double[_logPatterns.size()];
+//				System.out.println(temSave[0]);
+			}
+		}
 		
+		//下面测试用，打印一下
+		System.out.println("一共有"+inputMatirx.size()+"个向量"+"\t"+"一共有"+_logPatterns.size()+"个模式");
+//		initTime = Long.valueOf(_fileContent.get(0).get(segmentInformation.timeStamp));
+//		System.out.println("初始时间是"+initTime);
+//		for(int i = 0 ; i != inputMatirx.size() ; ++i) {
+//			System.out.println(Arrays.toString(inputMatirx.get(i)));
+//		}
+//		System.out.println("一共有"+inputMatirx.size()+"个向量");
 	}
 	/**
 	 * 模式持久化日志模式的函数，测试时公有，最后要变成私有！！！！！！！！******************
