@@ -125,7 +125,7 @@ public class TestCaseNewOne {
 		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170723";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
-		fr.GenerateFeatureVector(null, 100000000);
+		fr.GenerateFeatureVector(null, 1000000);
 	}
 	
 //	@Test

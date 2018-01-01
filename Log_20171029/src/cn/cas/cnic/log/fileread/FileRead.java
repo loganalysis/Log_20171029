@@ -220,11 +220,13 @@ public abstract class FileRead {
 //				System.out.println(_fileContent.get(i).get(segmentInformation.logPatternNum));
 				temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]++;
 //				System.out.println(temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]);
+//				System.out.println(Arrays.toString(temSave));
 			}else {
 				//如果时间到了，就增加一个向量，然后就可以新建一个向量了！
-				System.out.println(temSave[25]);
+				System.out.println(Arrays.toString(temSave));
 				inputMatirx.addElement(temSave);
 				temSave = new double[_logPatterns.size()];
+				initTime = Long.valueOf(_fileContent.get(i).get(segmentInformation.timeStamp));
 //				System.out.println(temSave[0]);
 			}
 		}
