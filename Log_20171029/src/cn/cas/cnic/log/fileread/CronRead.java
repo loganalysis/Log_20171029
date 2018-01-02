@@ -35,9 +35,13 @@ public class CronRead extends FileRead{
 		long timeStamp = 0;
 		try {
 			timeStamp = simpleDateFormat.parse(time11).getTime();
+//			System.out.println(time11);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
+//			System.out.println(time11);
 			e.printStackTrace();
+			return null;
+//			System.exit(0);
 		}
 		
 //		System.out.println(String.valueOf(timeStamp));

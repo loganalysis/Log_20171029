@@ -16,7 +16,7 @@ public class TestCaseNewTwo {
         System.out.println(" 测试结束！");
     }
 	
-	@Test  //测试浅拷贝和深拷贝的问题
+//	@Test  //测试浅拷贝和深拷贝的问题
 	public void testVector() {
 		Vector<Vector<Integer>> a = new Vector<Vector<Integer>>();
 		Vector<Integer>	b = new Vector<Integer>();
@@ -32,4 +32,15 @@ public class TestCaseNewTwo {
 		
 	}
 	
+	@Test //测试内存信息的函数
+	public void testMemory() {
+		System. out .println( " 内存信息 :" );
+		Runtime currRuntime = Runtime.getRuntime ();
+
+	       int nFreeMemory = ( int ) (currRuntime.freeMemory() / 1024 / 1024);
+
+	       int nTotalMemory = ( int ) (currRuntime.totalMemory() / 1024 / 1024);
+
+	       System. out .println( nFreeMemory + "M/" + nTotalMemory +"M(free/total)" );
+	}
 }

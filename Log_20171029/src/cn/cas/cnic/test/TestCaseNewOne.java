@@ -39,9 +39,9 @@ public class TestCaseNewOne {
 		
 	}
 	
-//	@Test //测试Cron日志，这里使用了反射技术
+	@Test //测试Cron日志，这里使用了反射技术
 	public void testCron() throws Exception {
-		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\messages-20170702";
+		String fileName = "C:\\Users\\dell\\Desktop\\cron\\cron-20171008";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		
 //		System.out.println(fr.toString());
@@ -70,27 +70,28 @@ public class TestCaseNewOne {
 			startTime = System.currentTimeMillis();    //获取开始时间
 			fr.getPattern(i,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS1);
 			endTime = System.currentTimeMillis();    //获取结束时间
-			System.out.println("使用第一种最长公共子序列分类模式分类的数目是："+fr.getPatternNum()+"   使用时间是："+(endTime - startTime) + "ms");
-			writeFileName = inputFileName + "\\" +result+"_LCS1"+ ".txt";
+			System.out.println("使用普通最长公共子序列分类模式分类的数目是："+fr.getPatternNum()+"   使用时间是："+(endTime - startTime) + "ms");
+			writeFileName = inputFileName + "\\" +result+"_LCS"+ ".txt";
 //			System.out.println(writeFileName);
 			fr.writePattern(writeFileName);
 			
-			startTime = System.currentTimeMillis();    //获取开始时间
-			fr.getPattern(i,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
-			endTime = System.currentTimeMillis();    //获取结束时间
-			System.out.println("使用第二种最长公共子序列分类模式分类的数目是："+fr.getPatternNum()+"   使用时间是："+(endTime - startTime) + "ms");
-			writeFileName = inputFileName + "\\" +result+"_LCS2"+ ".txt";
+//			startTime = System.currentTimeMillis();    //获取开始时间
+//			fr.getPattern(i,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
+//			endTime = System.currentTimeMillis();    //获取结束时间
+//			System.out.println("使用第二种最长公共子序列分类模式分类的数目是："+fr.getPatternNum()+"   使用时间是："+(endTime - startTime) + "ms");
+//			writeFileName = inputFileName + "\\" +result+"_LCS2"+ ".txt";
 //			System.out.println(writeFileName);
-			fr.writePattern(writeFileName);
+//			fr.writePattern(writeFileName);
 			
 			startTime = System.currentTimeMillis();    //获取开始时间
 			fr.getPattern(i,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCSNew);
 			endTime = System.currentTimeMillis();    //获取结束时间
-			System.out.println("使用最新的长公共子序列分类模式分类的数目是："+fr.getPatternNum()+"   使用时间是："+(endTime - startTime) + "ms");
+			System.out.println("使用优化的长公共子序列分类模式分类的数目是："+fr.getPatternNum()+"   使用时间是："+(endTime - startTime) + "ms");
 			writeFileName = inputFileName + "\\" +result+"_LCSNew"+ ".txt";
 //			System.out.println(writeFileName);
 			fr.writePattern(writeFileName);
 		}
+		fr.writeContentBySegment(inputFileName+"\\"+"test.txt", segmentInformation.timeStamp);
 	}
 	
 //	@Test  //测试写文件匹配内容到文件中的函数
@@ -120,12 +121,12 @@ public class TestCaseNewOne {
 		System.out.println(fr.getPatternNum());
 	}
 	
-	@Test  //测试时间戳和时间转化函数
+//	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
 		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170723";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
-		fr.GenerateFeatureVector(null, 1000000);
+		fr.GenerateFeatureVector(null, 1000);
 	}
 	
 //	@Test

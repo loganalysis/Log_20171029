@@ -1,5 +1,6 @@
 package cn.cas.cnic.test;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
@@ -13,6 +14,13 @@ import cn.cas.cnic.log.formatfactory.FormatFactory;
 
 public class MethodNeededTest {
 	public static FileRead getFileReadFromFileName(String fileName) {
+		String oringalName = fileName;
+		File file = new File(fileName);
+		if(file.isDirectory()) {
+			File[] fileArray=file.listFiles();
+			fileName = fileArray[0].getAbsolutePath();
+		}
+		System.out.println(fileName);
 		String className = fileName.substring(fileName.lastIndexOf("\\")+1,fileName.indexOf("-"));
 		className = className.substring(0, 1).toUpperCase() + className.substring(1);
 		className += "Factory";
@@ -35,7 +43,7 @@ public class MethodNeededTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ff.createRead(fileName);
+		return ff.createRead(oringalName);
 	}
 	
 	public static Vector<String> breakdown(String str) {

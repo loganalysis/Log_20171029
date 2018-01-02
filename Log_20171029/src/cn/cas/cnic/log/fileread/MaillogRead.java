@@ -52,7 +52,9 @@ public class MaillogRead extends FileRead{
 			timeStamp = simpleDateFormat.parse(time11).getTime();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
+			return null;
 		}
 		
 //		System.out.println(String.valueOf(timeStamp));
