@@ -85,7 +85,7 @@ public abstract class FileRead {
 				Vector<String> temStr = new Vector<String>();
 				temStr.add(compareLog);
 				_logPatterns.add(temStr);
-				_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(_logPatterns.size()));  //设置第i个数据的模式   2017-12-29
+				_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(_logPatterns.size()-1));  //设置第i个数据的模式   2017-12-29
 //				System.out.println("增加了一个模式，现在模式有"+logPatterns.size());
 			}
 //			System.out.println("一个有"+_fileContent.size()+"，  现在处理第"+i);
@@ -218,7 +218,7 @@ public abstract class FileRead {
 		for(int i = 0 ; i != _fileContent.size()-1 ; ++i) {
 			if( (Long.valueOf(_fileContent.get(i).get(segmentInformation.timeStamp))-initTime) < time) {
 				//如果时间不到设定值，则对应类型加一
-//				System.out.println(_fileContent.get(i).get(segmentInformation.logPatternNum));
+//				System.out.println(_fileContent.get(i).get(segmentInformation.logPatternNum)+"一共有模式数目："+temSave.length);
 				temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]++;
 //				System.out.println(temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]);
 //				System.out.println(Arrays.toString(temSave));
@@ -244,6 +244,7 @@ public abstract class FileRead {
 		VectorName = VectorName + "\\" + "Vector_"+time/1000+"s.txt";
 		System.out.println(VectorName);
 		Iterator<double[]> iterator = _inputMatirx.iterator();
+		double[] temWrite = new double[_logPatterns.size()];
 		File file = new File(VectorName);
         FileWriter fw = null;
         BufferedWriter writer = null;
@@ -251,7 +252,10 @@ public abstract class FileRead {
             fw = new FileWriter(file);
             writer = new BufferedWriter(fw);
             while(iterator.hasNext()){
-            	writer.write(Arrays.toString(iterator.next()));
+            	temWrite = iterator.next();
+            	for(int i = 0 ; i != temWrite.length ; ++i) {
+            		writer.write(temSave[i]+" ");
+            	}
                 writer.newLine();//换行
             }
             writer.flush();

@@ -39,7 +39,7 @@ public class TestCaseNewOne {
 		
 	}
 	
-	@Test //测试Cron日志，这里使用了反射技术
+//	@Test //测试Cron日志，这里使用了反射技术
 	public void testCron() throws Exception {
 		String fileName = "C:\\Users\\dell\\Desktop\\cron\\cron-20171008";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
@@ -121,9 +121,9 @@ public class TestCaseNewOne {
 		System.out.println(fr.getPatternNum());
 	}
 	
-//	@Test  //测试时间戳和时间转化函数
+	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170723";
+		String fileName = "C:\\Users\\34791\\Desktop\\loganalysis\\logs201707\\cron-20170709";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
 		fr.GenerateFeatureVector(null, 1000);
