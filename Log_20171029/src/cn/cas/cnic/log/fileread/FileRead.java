@@ -19,13 +19,16 @@ import java.util.Vector;
 import javax.swing.text.Segment;
 
 import cn.cas.cnic.log.assistent.TimeOfLog;
+import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
 
 //import ReadLog.segmentInformation;
 
 public abstract class FileRead {
 	protected String _fileName = null;  //< 用于存储文件的名字
 	protected double _threshold = 0.5;  //< 用于存储日志模式比对的阈值
+	protected Vector<String> _fileSourceContent = new Vector<String>();  //仅仅存储日志源数据的数据结构
 	protected Vector<HashMap<segmentInformation,String>> _fileContent = new Vector<HashMap<segmentInformation,String>>();  //< 用来存储读取后文件的缓存向量，一个字符串代表一行
+	protected Vector<String> _logOnlyPatterns = new Vector<String>(); //仅仅存储日志模式的数据
 	protected Vector<Vector<String>> _logPatterns = new Vector<Vector<String>>();  //< 用来存储日志模式
 	protected Vector<double[]> _inputMatirx = new Vector<double[]>();  //< 用来存储日志模式向量的矩阵
 	public enum segmentInformation {  //< 记录信息段位的枚举                                         //注意：java的枚举隐式的使用了static final修饰符进行修饰！
@@ -64,28 +67,28 @@ public abstract class FileRead {
 	 */
 	public void getPattern(double threshold , segmentInformation SI, IdenticalWordRate.matchMethod MM) {
 		_threshold = threshold;
-		_logPatterns.clear();
+		_logOnlyPatterns.clear();
 //		PatternUnpersistence();  //进行模式反持久化****************测试阶段函数
-		for(int i = 0 ; i != _fileContent.size() ; ++i) {
+		for(int i = 0 ; i != _fileSourceContent.size() ; ++i) {
 			boolean isMatched = false;  //是否匹配了，默认没有匹配
-			String compareLog = _fileContent.get(i).get(SI);  //用于比较的日志内容
+			String compareLog = _fileSourceContent.get(i);  //用于比较的日志内容
 //			System.out.println(compareLog);
-			for(int j = 0 ; j != _logPatterns.size() ; ++j) {
-				String sourceLog = _logPatterns.get(j).get(0);
+			for(int j = 0 ; j != _logOnlyPatterns.size() ; ++j) {
+				String sourceLog = _logOnlyPatterns.get(j);
 				double rate = IdenticalWordRate.getRate(breakdown(sourceLog), breakdown(compareLog), MM);  //这里用到抽象方法！
 //				System.out.println(rate);
 				if( rate > threshold || rate == threshold) {
 					isMatched = true;
-					_logPatterns.get(j).add(compareLog);
-					_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(j));  //设置第i个数据的模式   2017-12-29
+//					_logPatterns.get(j).add(compareLog);
+//					_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(j));  //设置第i个数据的模式   2017-12-29
 					break;
 				}
 			}
 			if(!isMatched) {  //没有匹配的，就新增加一个模式组别
-				Vector<String> temStr = new Vector<String>();
-				temStr.add(compareLog);
-				_logPatterns.add(temStr);
-				_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(_logPatterns.size()-1));  //设置第i个数据的模式   2017-12-29
+//				Vector<String> temStr = new Vector<String>();
+//				temStr.add(compareLog);
+				_logOnlyPatterns.add(compareLog);
+//				_fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(_logPatterns.size()-1));  //设置第i个数据的模式   2017-12-29
 //				System.out.println("增加了一个模式，现在模式有"+logPatterns.size());
 			}
 //			System.out.println("一个有"+_fileContent.size()+"，  现在处理第"+i);
@@ -94,10 +97,10 @@ public abstract class FileRead {
 	}
 	//后面是辅助测试的公有函数
 	public int getPatternNum() {
-		return _logPatterns.size();
+		return _logOnlyPatterns.size();
 	}
-	public Vector<Vector<String>> getLogPatterns() {
-		return _logPatterns;
+	public Vector<String> getLogPatterns() {
+		return _logOnlyPatterns;
 	}
 	public int getFileNum() {
 		return _fileContent.size();
@@ -397,10 +400,20 @@ public abstract class FileRead {
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
 //				                System.out.println("line " + line + ": " + tempString);  //< 显示行号
-            	HashMap<segmentInformation, String> temHashMap = dealLogByLine(tempString);
-            	if(temHashMap != null)
-            		_fileContent.add(temHashMap);  //将一行日志分开成为含有题目的键值对
-//				                line++;
+//            	HashMap<segmentInformation, String> temHashMap = dealLogByLine(tempString);
+            	String[] splitLine = tempString.split("[ ]+");
+        		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
+        		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
+            	int i = 5;
+        		segment.setLength(0);
+        		while(i!=splitLine.length) {
+        			segment.append(splitLine[i]).append(' ');		
+        			++i;
+        		}
+            	String temStr = segment.toString();
+            	if(temStr != null)
+//            		_fileContent.add(temHashMap);  //将一行日志分开成为含有题目的键值对
+				    _fileSourceContent.add(temStr);
             }
             reader.close();
         } catch (IOException e) {
