@@ -114,11 +114,11 @@ public abstract class FileRead {
 	 */
 	public void writePattern(String fileName) {
 		//写之前我先将日志模式按照数目大小排一下序
-		Collections.sort(_logPatterns,new Comparator<Vector<String>>() {
-            public int compare(Vector<String> left, Vector<String> right) {
-                return (right.size()-left.size());
-            }
-        });
+//		Collections.sort(_logPatterns,new Comparator<Vector<String>>() {
+//            public int compare(Vector<String> left, Vector<String> right) {
+//                return (right.size()-left.size());
+//            }
+//        });
 		
         File file = new File(fileName);
         FileWriter fw = null;
@@ -128,7 +128,8 @@ public abstract class FileRead {
             writer = new BufferedWriter(fw);
             for(int i = 0 ; i != _logPatterns.size() ; ++i) {
             	Vector<String> tem = _logPatterns.elementAt(i);
-            	writer.write("总共有："+_logPatterns.size()+"个日志模式"+"     现在是第："+(i+1)+"个模式");
+            	writer.write("总共有："+_logPatterns.size()+"个日志模式"+"     现在是第："+(i+1)+"个模式"
+            			+" 该模式属于："+"type"+(i+1));
             	writer.newLine();
             	if(tem.size()>1) {
             		writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1),"="));   //这里生成了带有*的模式的结果,而且结果对于=号进行了分开
@@ -138,10 +139,10 @@ public abstract class FileRead {
             	writer.newLine();
             	writer.write("——————该模式包含日志条数："+tem.size()+"   占总文件的："+tem.size()*100.0/_fileContent.size()+"%"+"   分别是：");
             	writer.newLine();
-            	for(int j = 0; j != tem.size() ; ++j) {
-            		writer.write(tem.elementAt(j));
-            		writer.newLine();
-            	}
+//            	for(int j = 0; j != tem.size() ; ++j) {
+//            		writer.write(tem.elementAt(j));
+//            		writer.newLine();
+//            	}
             	writer.write("*******************************");
                 writer.newLine();//换行
             }
@@ -197,7 +198,7 @@ public abstract class FileRead {
 	 * @throws ParseException 
 	 */
 	public void GenerateFeatureVector(String fileName, long time) throws ParseException {
-		//第一步：写之前我先将日志模式按照数目大小排一下序
+		//第一步：写之前我先将日志模式按照时间排一下序
 		Collections.sort(_fileContent,new Comparator<HashMap<segmentInformation, String>>() {
             public int compare(HashMap<segmentInformation, String> left, HashMap<segmentInformation, String> right) {
             	Long leftLong = Long.valueOf(left.get(segmentInformation.timeStamp));
@@ -251,10 +252,16 @@ public abstract class FileRead {
         try {
             fw = new FileWriter(file);
             writer = new BufferedWriter(fw);
+            //先写入类别
+            for(int i = 0 ; i != _logPatterns.size() ; ++i) {
+            	writer.write("type"+(i+1)+" ");
+            }
+            writer.newLine();
+            //然后写入数据
             while(iterator.hasNext()){
             	temWrite = iterator.next();
             	for(int i = 0 ; i != temWrite.length ; ++i) {
-            		writer.write(temSave[i]+" ");
+            		writer.write(temWrite[i]+" ");
             	}
                 writer.newLine();//换行
             }

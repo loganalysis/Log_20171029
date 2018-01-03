@@ -123,10 +123,11 @@ public class TestCaseNewOne {
 	
 	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-		String fileName = "C:\\Users\\34791\\Desktop\\loganalysis\\logs201707\\cron-20170709";
+		String fileName = "C:\\Users\\34791\\Desktop\\loganalysis\\logs201707\\secure-20170702";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
 		fr.GenerateFeatureVector(null, 1000);
+		fr.writePattern("C:\\Users\\34791\\Desktop\\loganalysis\\logs201707\\secure-20170702-pattern");
 	}
 	
 //	@Test
