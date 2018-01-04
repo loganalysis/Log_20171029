@@ -37,6 +37,8 @@ public class MessagesRead extends FileRead{
 	@Override
 	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
 		String[] splitLine = LogLine.split("[ ]+");
+		if(splitLine.length < 5)   //可能出现空行，或者只有时间的日志！ 2018-1-2
+			return null;
 		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
 		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
 		//第一个到第三个小段是时间段     time

@@ -24,6 +24,8 @@ public class CronRead extends FileRead{
 	@Override //对于Cron类的日志分类，第四个标签最后可能没有分号！
 	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
 		String[] splitLine = LogLine.split("[ ]+");
+		if(splitLine.length < 5)   //可能出现空行，或者只有时间的日志！ 2018-1-2
+			return null;
 		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
 		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
 		//第一个到第三个小段是时间段     time

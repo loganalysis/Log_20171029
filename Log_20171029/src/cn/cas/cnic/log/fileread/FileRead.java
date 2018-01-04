@@ -139,10 +139,10 @@ public abstract class FileRead {
             	writer.newLine();
             	writer.write("——————该模式包含日志条数："+tem.size()+"   占总文件的："+tem.size()*100.0/_fileContent.size()+"%"+"   分别是：");
             	writer.newLine();
-//            	for(int j = 0; j != tem.size() ; ++j) {
-//            		writer.write(tem.elementAt(j));
-//            		writer.newLine();
-//            	}
+            	for(int j = 0; j <10 && j != tem.size(); ++j) {   //写少于十条用于查看
+            		writer.write(tem.elementAt(j));
+            		writer.newLine();
+            	}
             	writer.write("*******************************");
                 writer.newLine();//换行
             }
