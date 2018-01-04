@@ -103,7 +103,7 @@ public abstract class FileRead {
 		return _logOnlyPatterns;
 	}
 	public int getFileNum() {
-		return _fileContent.size();
+		return _fileSourceContent.size();
 	}
 	public Vector<HashMap<segmentInformation,String>> getFileContent() {
 		return _fileContent;
@@ -129,19 +129,15 @@ public abstract class FileRead {
         try {
             fw = new FileWriter(file);
             writer = new BufferedWriter(fw);
-            for(int i = 0 ; i != _logPatterns.size() ; ++i) {
-            	Vector<String> tem = _logPatterns.elementAt(i);
-            	writer.write("总共有："+_logPatterns.size()+"个日志模式"+"     现在是第："+(i+1)+"个模式"
+            for(int i = 0 ; i != _logOnlyPatterns.size() ; ++i) {
+            	String tem = _logOnlyPatterns.elementAt(i);
+            	writer.write("总共有："+_logOnlyPatterns.size()+"个日志模式"+"     现在是第："+(i+1)+"个模式"
             			+" 该模式属于："+"type"+(i+1));
             	writer.newLine();
-            	if(tem.size()>1) {
-            		writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1),"="));   //这里生成了带有*的模式的结果,而且结果对于=号进行了分开
-            	}
-            	else
-            		writer.write(tem.elementAt(0));
+            	writer.write(tem);
             	writer.newLine();
-            	writer.write("——————该模式包含日志条数："+tem.size()+"   占总文件的："+tem.size()*100.0/_fileContent.size()+"%"+"   分别是：");
-            	writer.newLine();
+//            	writer.write("——————该模式包含日志条数："+tem.size()+"   占总文件的："+tem.size()*100.0/_fileContent.size()+"%"+"   分别是：");
+//            	writer.newLine();
 //            	for(int j = 0; j != tem.size() ; ++j) {
 //            		writer.write(tem.elementAt(j));
 //            		writer.newLine();
@@ -398,12 +394,14 @@ public abstract class FileRead {
             String tempString = null;
 //				            int line = 1;
             // 一次读入一行，直到读入null为文件结束
+            StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
             while ((tempString = reader.readLine()) != null) {
 //				                System.out.println("line " + line + ": " + tempString);  //< 显示行号
 //            	HashMap<segmentInformation, String> temHashMap = dealLogByLine(tempString);
             	String[] splitLine = tempString.split("[ ]+");
         		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
-        		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
+        		if(splitLine.length < 5)  //有可能出现空行，或者只有时间的日志！！ 2018-1-4
+        			continue;
             	int i = 5;
         		segment.setLength(0);
         		while(i!=splitLine.length) {
