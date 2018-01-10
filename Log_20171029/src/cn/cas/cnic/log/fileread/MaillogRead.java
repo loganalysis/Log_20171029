@@ -33,7 +33,7 @@ public class MaillogRead extends FileRead{
 				result.add(s);
 			}
 		}
-		return result;
+		return result; 
 	}
 	
 	@Override

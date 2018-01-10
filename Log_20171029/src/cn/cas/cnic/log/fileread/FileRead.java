@@ -26,9 +26,9 @@ import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
 public abstract class FileRead {
 	protected String _fileName = null;  //< 用于存储文件的名字
 	protected double _threshold = 0.5;  //< 用于存储日志模式比对的阈值
-	protected Vector<String> _fileSourceContent = new Vector<String>();  //仅仅存储日志源数据的数据结构
+	protected Vector<Vector<String>> _fileSourceContent = new Vector<Vector<String>>();  //仅仅存储日志源数据的数据结构
 	protected Vector<HashMap<segmentInformation,String>> _fileContent = new Vector<HashMap<segmentInformation,String>>();  //< 用来存储读取后文件的缓存向量，一个字符串代表一行
-	protected Vector<String> _logOnlyPatterns = new Vector<String>(); //仅仅存储日志模式的数据
+	protected Vector<Vector<String>> _logOnlyPatterns = new Vector<Vector<String>>(); //仅仅存储日志模式的数据
 	protected Vector<Vector<String>> _logPatterns = new Vector<Vector<String>>();  //< 用来存储日志模式
 	protected Vector<double[]> _inputMatirx = new Vector<double[]>();  //< 用来存储日志模式向量的矩阵
 	public enum segmentInformation {  //< 记录信息段位的枚举                                         //注意：java的枚举隐式的使用了static final修饰符进行修饰！
@@ -71,11 +71,11 @@ public abstract class FileRead {
 //		PatternUnpersistence();  //进行模式反持久化****************测试阶段函数
 		for(int i = 0 ; i != _fileSourceContent.size() ; ++i) {
 			boolean isMatched = false;  //是否匹配了，默认没有匹配
-			String compareLog = _fileSourceContent.get(i);  //用于比较的日志内容
+			Vector<String> compareLog = _fileSourceContent.get(i);  //用于比较的日志内容
 //			System.out.println(compareLog);
 			for(int j = 0 ; j != _logOnlyPatterns.size() ; ++j) {
-				String sourceLog = _logOnlyPatterns.get(j);
-				double rate = IdenticalWordRate.getRate(breakdown(sourceLog), breakdown(compareLog), MM);  //这里用到抽象方法！
+				Vector<String> sourceLog = _logOnlyPatterns.get(j);
+				double rate = IdenticalWordRate.getRate(sourceLog, compareLog, MM);  //这里用到抽象方法！
 //				System.out.println(rate);
 				if( rate > threshold || rate == threshold) {
 					isMatched = true;
@@ -99,7 +99,7 @@ public abstract class FileRead {
 	public int getPatternNum() {
 		return _logOnlyPatterns.size();
 	}
-	public Vector<String> getLogPatterns() {
+	public Vector<Vector<String>> getLogPatterns() {
 		return _logOnlyPatterns;
 	}
 	public int getFileNum() {
@@ -130,11 +130,12 @@ public abstract class FileRead {
             fw = new FileWriter(file);
             writer = new BufferedWriter(fw);
             for(int i = 0 ; i != _logOnlyPatterns.size() ; ++i) {
-            	String tem = _logOnlyPatterns.elementAt(i);
+            	Vector<String> tem = _logOnlyPatterns.elementAt(i);
             	writer.write("总共有："+_logOnlyPatterns.size()+"个日志模式"+"     现在是第："+(i+1)+"个模式"
             			+" 该模式属于："+"type"+(i+1));
             	writer.newLine();
-            	writer.write(tem);
+            	for(String singleStr : tem)
+            		writer.write(singleStr+' ');
             	writer.newLine();
 //            	writer.write("——————该模式包含日志条数："+tem.size()+"   占总文件的："+tem.size()*100.0/_fileContent.size()+"%"+"   分别是：");
 //            	writer.newLine();
@@ -411,7 +412,7 @@ public abstract class FileRead {
             	String temStr = segment.toString();
             	if(temStr != null)
 //            		_fileContent.add(temHashMap);  //将一行日志分开成为含有题目的键值对
-				    _fileSourceContent.add(temStr);
+				    _fileSourceContent.add(breakdown(temStr));   //这里使用了虚函数
             }
             reader.close();
         } catch (IOException e) {

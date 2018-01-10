@@ -41,7 +41,7 @@ public class TestCaseNewOne {
 	
 	@Test //测试Cron日志，这里使用了反射技术
 	public void testCron() throws Exception {
-		String fileName = "C:\\Users\\dell\\Desktop\\maillog";
+		String fileName = "C:\\Users\\dell\\Desktop\\messages";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		
 //		System.out.println(fr.toString());

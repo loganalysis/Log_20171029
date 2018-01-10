@@ -4,9 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import cn.cas.cnic.log.assistent.TimeOfLog;
 import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
+import cn.cas.cnic.log.logpattern.WordConvertPatterns;
 
 public class MessagesRead extends FileRead{
 	public MessagesRead(String fileName) {
@@ -15,23 +17,68 @@ public class MessagesRead extends FileRead{
 	
 	@Override  //对于messages日志，必须经等于号的处理和多出的逗号的处理
 	protected Vector<String> breakdown(String str) {
+//		Vector<String> result = new Vector<String>();
+//		String[] strs = str.split(" ");
+//		StringBuilder sb = new StringBuilder();
+//		for (String s : strs) {
+//			String[] strArray = s.split("=");
+//			if(strArray.length == 2) {
+//				sb.setLength(0); 
+//				sb.append(strArray[0]).append("=");
+//				result.add(sb.toString());   
+////				result.add(strArray[1]);
+//			}else { 
+//				result.add(s);
+//			}
+//		}
+//		return result;
 		Vector<String> result = new Vector<String>();
-		String[] strs = str.split(" ");
-		StringBuilder sb = new StringBuilder();
-		for (String s : strs) {
-			if(s.endsWith(",") || s.endsWith(":"))
-				s = s.substring(0, s.length()-1);
-			String[] strArray = s.split("=");
-			if(strArray.length == 2) {
-				sb.setLength(0);
-				sb.append(strArray[0]).append("=");
-				result.add(sb.toString());   
-//				result.add(strArray[1]);
-			}else {
-				result.add(s);
-			}
-		}
-		return result;
+		  String[] strs = str.split(" ");
+		  if(str.length() > 2) {
+			  if(strs[0].equals("SERVICE") && strs[1].equals("ALERT:")) {
+				  result.add(strs[0]);
+				  result.add(strs[1]);
+				  return result;
+			  }
+			  else if(strs[0].equals("CURRENT") && strs[1].equals("SERVICE") && strs[2].equals("STATE:")) {
+				  result.add(strs[0]);
+				  result.add(strs[1]);
+				  result.add(strs[3]);
+				  return result;
+			  }
+		  }
+		  for (String s : strs)
+		  {
+			   boolean eqsign = false;
+			   String[] attr = s.split("=");
+			   if (attr.length == 2)
+			   {
+				   if (attr[0].length() > 0 && attr[1].length() > 0)
+				   {
+					   	result.add(attr[0]+"=");
+					   	eqsign = true;
+				   }
+			   }	
+			   if (!eqsign)
+			   {
+				   if (Pattern.matches(WordConvertPatterns.PATTERN_NUM,s))
+					   	result.add("<NUMBER>");
+				   else if (Pattern.matches(WordConvertPatterns.PATTERN_DIGITNUM,s))
+						result.add("<DECIMAL>");
+				   else if (Pattern.matches(WordConvertPatterns.PATTERN_IP,s))
+						result.add("<IP>");
+				   else if (Pattern.matches(WordConvertPatterns.PATTERN_MEMADDR,s))
+						result.add("<MEMADDR>");
+				   else if (Pattern.matches(WordConvertPatterns.PATTERN_HEXNUM,s))
+						result.add("<HEXNUM>");
+				   else
+						result.add(s);
+				   
+//				   result.add(s);   //如果上面的注释掉，这个要加上
+			   }
+			   
+		  }
+		  return result;
 	}
 	
 	@Override

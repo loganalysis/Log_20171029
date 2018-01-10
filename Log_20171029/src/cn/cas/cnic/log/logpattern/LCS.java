@@ -99,54 +99,56 @@ public class LCS
  
  
  
- public static Vector<String> breakdown(String str)
- {
-  Vector<String> result = new Vector<String>();
-  String[] strs = str.split(" ");
-  for (String s : strs)
-  {
-   boolean eqsign = false;
-   String[] attr = s.split("=");
-   if (attr.length == 2)
-   {
-    if (attr[0].length() > 0 && attr[1].length() > 0)
-    {
-     result.add(attr[0]+"=");
-     eqsign = true;
-    }
-   }
-   if (!eqsign)
-   {
-    if (Pattern.matches(WordConvertPatterns.PATTERN_NUM,s))
-     result.add("<NUMBER>");
-    else if (Pattern.matches(WordConvertPatterns.PATTERN_DIGITNUM,s))
-     result.add("<DECIMAL>");
-    else if (Pattern.matches(WordConvertPatterns.PATTERN_IP,s))
-     result.add("<IP>");
-    else if (Pattern.matches(WordConvertPatterns.PATTERN_MEMADDR,s))
-     result.add("<MEMADDR>");
-    else if (Pattern.matches(WordConvertPatterns.PATTERN_HEXNUM,s))
-     result.add("<HEXNUM>");
-    else
-     result.add(s);
-   }
-  }
-  return result;
- }
+public static Vector<String> breakdown(String str)
+{
+	  Vector<String> result = new Vector<String>();
+	  String[] strs = str.split(" ");
+	  for (String s : strs)
+	  {
+		   boolean eqsign = false;
+		   String[] attr = s.split("=");
+		   if (attr.length == 2)
+		   {
+			   if (attr[0].length() > 0 && attr[1].length() > 0)
+			   {
+				   	result.add(attr[0]+"=");
+				   	eqsign = true;
+			   }
+		   }	
+		   if (!eqsign)
+		   {
+			   if (Pattern.matches(WordConvertPatterns.PATTERN_NUM,s))
+				   	result.add("<NUMBER>");
+			   else if (Pattern.matches(WordConvertPatterns.PATTERN_DIGITNUM,s))
+					result.add("<DECIMAL>");
+			   else if (Pattern.matches(WordConvertPatterns.PATTERN_IP,s))
+					result.add("<IP>");
+			   else if (Pattern.matches(WordConvertPatterns.PATTERN_MEMADDR,s))
+					result.add("<MEMADDR>");
+			   else if (Pattern.matches(WordConvertPatterns.PATTERN_HEXNUM,s))
+					result.add("<HEXNUM>");
+			   else
+					result.add(s);
+		   }
+	  }
+	  return result;
+}
  
  public static void main(String[] args)
  {
   //Vector<String> a = breakdown("057851A090C: from=<root@s1.hr.scgrid.cn>, size=671, nrcpt=1 (queue active)");
   //Vector<String> b = breakdown("057851A090C: removed");
-//  Vector<String> a = breakdown("Invalid user admin from 195.154.33.138");
-//  Vector<String> b = breakdown("Failed password for invalid user admin from 195.154.33.138 port 52056 ssh2");
+  Vector<String> a = breakdown("Invalid user admin from 195.154.33.138");
+  Vector<String> b = breakdown("Failed password for invalid user admin from 195.154.33.138 port 52056 ssh2");
   //Vector<String> a = breakdown("a c f b d c e");
   //Vector<String> b = breakdown("a d b c e c");
 	 
-	Vector<String> a = breakdown("a c");
-	Vector<String> b = breakdown("d");
+//	Vector<String> a = breakdown("a c");
+//	Vector<String> b = breakdown("d");
 	 
   Vector<String> c = LCS.getLCS(a,b);
+  System.out.println(a);
+  System.out.println(b);
   System.out.println(c);
  }
 }
