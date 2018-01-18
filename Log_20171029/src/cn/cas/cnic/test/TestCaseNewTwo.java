@@ -1,6 +1,12 @@
 package cn.cas.cnic.test;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Vector;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +38,7 @@ public class TestCaseNewTwo {
 		
 	}
 	
-	@Test //测试内存信息的函数
+//	@Test //测试内存信息的函数
 	public void testMemory() {
 		System. out .println( " 内存信息 :" );
 		Runtime currRuntime = Runtime.getRuntime ();
@@ -42,5 +48,35 @@ public class TestCaseNewTwo {
 	       int nTotalMemory = ( int ) (currRuntime.totalMemory() / 1024 / 1024);
 
 	       System. out .println( nFreeMemory + "M/" + nTotalMemory +"M(free/total)" );
+	}
+	
+//	@Test   //测试使用excel表格存数据，但是上限是short,即32767,太少了！
+	public void testExcel() throws IOException {
+	    Workbook wb = new HSSFWorkbook();
+	    Sheet sheet = wb.createSheet("new sheet");
+
+	    // Create a row and put some cells in it. Rows are 0 based.
+	    Row row = sheet.createRow((short) 0);
+
+	    // Aqua background
+	    CellStyle style = wb.createCellStyle();
+	    style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
+	    style.setFillPattern(CellStyle.BIG_SPOTS);
+	    Cell cell = row.createCell((short) 1);
+	    cell.setCellValue("X");
+	    cell.setCellStyle(style);
+
+	    // Orange "foreground", foreground being the fill foreground not the font color.
+	    style = wb.createCellStyle();
+	    style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
+	    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+	    cell = row.createCell((short) 2);
+	    cell.setCellValue("X");
+	    cell.setCellStyle(style);
+
+	    // Write the output to a file
+	    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+	    wb.write(fileOut);
+	    fileOut.close();
 	}
 }

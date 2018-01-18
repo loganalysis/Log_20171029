@@ -28,6 +28,18 @@
   		<artifactId>pca_transform</artifactId>
   		<scope>provided</scope>
   	</dependency>
+  	<dependency>
+  		<groupId>org.apache.poi</groupId>
+  		<artifactId>poi</artifactId>
+  		<version>3.9</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>nz.ac.waikato.cms.weka</groupId>
+  		<artifactId>weka-dev</artifactId>
+  		<version>3.9.1</version>
+  		<scope>provided</scope>
+  	</dependency>
   </dependencies>
   <dependencyManagement>
   	<dependencies>

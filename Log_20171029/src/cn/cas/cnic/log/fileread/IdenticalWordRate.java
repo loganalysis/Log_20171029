@@ -116,99 +116,99 @@ public class IdenticalWordRate {
 	 }
 
 	 private static Vector<String> getLCS1(Vector<String> v1, Vector<String> v2)
-	 {
-	  int[][] d = new int[v1.size()][v2.size()];
-	  for (int i = 0; i < v1.size(); i++)
-	   for (int j = 0; j < v2.size(); j++)
-	   {
-	    counter1++;
-	    if (v1.elementAt(i).equals(v2.elementAt(j)))
-	    {
-	     if (i-1 < 0 || j-1 < 0)
-	      d[i][j] = 1;
-	     else
-	      d[i][j] = d[i-1][j-1] + 1;
-	    }
-	    else
-	    {
-	     if (i-1 < 0 && j-1 < 0)
-	      d[i][j] = 0;
-	     else if (i-1 < 0)
-	      d[i][j] = d[i][j-1];
-	     else if (j-1 < 0)
-	      d[i][j] = d[i-1][j];
-	     else if (d[i][j-1] > d[i-1][j])
-	      d[i][j] = d[i][j-1];
-	     else
-	      d[i][j] = d[i-1][j];
-	    }
-	   }
-	  
-	  Vector<String> result = new Vector<String>();
-	  int ci = v1.size()-1;
-	  int cj = v2.size()-1;
-	  int c = d[ci][cj];
-	  //if (c == 0)
-	  // return result;
-	  while (c > 0)
-	  {
-	   if (ci > 0 && cj > 0) // not at border
-	   {
-	    if (c > d[ci][cj-1] && c > d[ci-1][cj] && c > d[ci-1][cj-1]) // is featured
-	    {
-	     result.add(0,v1.elementAt(ci));
-	     c--;
-	     ci--;
-	     cj--;
-	    }
-	    else if (c == d[ci-1][cj-1])
-	    {
-	     ci--;
-	     cj--;
-	    }
-	    else if (c == d[ci-1][cj])
-	    {
-	     ci--;
-	    }
-	    else
-	    {
-	     cj--;
-	    }
-	   }
-	   else if (ci > 0) // at left border
-	   {
-	    if (c > d[ci-1][cj])
-	    {
-	     result.add(0,v1.elementAt(ci));
-	     c--;
-	     ci--;
-	    }
-	    else
-	    {
-	     ci--;
-	    }
-	   }
-	   else if (cj > 0) // at top border
-	   {
-	    if (c > d[ci][cj-1])
-	    {
-	     result.add(0,v1.elementAt(ci));
-	     c--;
-	     cj--;
-	    }
-	    else
-	    {
-	     cj--;
-	    }
-	   }
-	   else // at top-left corner
-	   {
-	    result.add(0,v1.elementAt(ci));
-	    c--;
-	   }
-	  }
-	  return result;
-	 }
+     {
+	     int[][] d = new int[v1.size()][v2.size()];
+	     for (int i = 0; i < v1.size(); i++)
+	         for (int j = 0; j < v2.size(); j++)
+	         {
+	             counter1++;
+	             if (v1.elementAt(i).equals(v2.elementAt(j)))
+	             {
+	                 if (i-1 < 0 || j-1 < 0)
+	                     d[i][j] = 1;
+	                 else
+	                     d[i][j] = d[i-1][j-1] + 1;
+	             }
+	             else
+	             {
+	                 if (i-1 < 0 && j-1 < 0)
+	                     d[i][j] = 0;
+	                 else if (i-1 < 0)
+	                     d[i][j] = d[i][j-1];
+	                 else if (j-1 < 0)
+	                     d[i][j] = d[i-1][j];
+	                 else if (d[i][j-1] > d[i-1][j])
+	                     d[i][j] = d[i][j-1];
+	                 else
+	                     d[i][j] = d[i-1][j];
+	             }
+	         }
+	     
+	     Vector<String> result = new Vector<String>();
+	     int ci = v1.size()-1;
+	     int cj = v2.size()-1;
+	     int c = d[ci][cj];
+	     //if (c == 0)
+	     // return result;
+	     while (c > 0)
+	     {
+	         if (ci > 0 && cj > 0) // not at border
+	         {
+	             if (c > d[ci][cj-1] && c > d[ci-1][cj] && c > d[ci-1][cj-1]) // is featured
+	             {
+	                 result.add(0,v1.elementAt(ci));
+	                 c--;
+	                 ci--;
+	                 cj--;
+	             }
+	             else if (c == d[ci-1][cj-1])
+	             {
+	                 ci--;
+	                 cj--;
+	             }
+	             else if (c == d[ci-1][cj])
+	             {
+	                 ci--;
+	             }
+	             else
+	             {
+	                 cj--;
+	             }
+	         }
+	         else if (ci > 0) // at left border
+	         {
+	             if (c > d[ci-1][cj])
+	             {
+	                 result.add(0,v1.elementAt(ci));
+	                 c--;
+	                 ci--;
+	             }
+	             else
+	             {
+	                 ci--;
+	             }
+	         }
+	         else if (cj > 0) // at top border
+	         {
+	             if (c > d[ci][cj-1])
+	             {
+	                 result.add(0,v1.elementAt(ci));
+	                 c--;
+	                 cj--;
+	             }
+	             else
+	             {
+	                 cj--;
+	             }
+	         }
+	         else // at top-left corner
+	         {
+	             result.add(0,v1.elementAt(ci));
+	             c--;
+	         }
+	     }
+	     return result;
+     }
 	 /**
 	  * 通过一个一个比较的方法得到共有的自串
 	  * @param v1

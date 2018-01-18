@@ -91,7 +91,9 @@ public class TestCaseNewOne {
 //			System.out.println(writeFileName);
 			fr.writePattern(writeFileName);
 		}
-		fr.writeContentBySegment(inputFileName+"\\"+"test.txt", segmentInformation.timeStamp);
+		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
+		segToWrite.add(segmentInformation.timeStamp);
+		fr.writeContentBySegment(inputFileName+"\\"+"test.txt", segToWrite);
 	}
 	
 //	@Test  //测试写文件匹配内容到文件中的函数
@@ -99,7 +101,9 @@ public class TestCaseNewOne {
 		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\messages-20170702";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		fileName += "_codeContent.txt";
-		fr.writeContentBySegment(fileName, segmentInformation.codeContent);
+		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
+        segToWrite.add(segmentInformation.codeContent);
+		fr.writeContentBySegment(fileName, segToWrite);
 	}
 	
 //	@Test //测试模式生成函数
@@ -123,11 +127,23 @@ public class TestCaseNewOne {
 	
 	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-		String fileName = "C:\\Users\\34791\\Desktop\\loganalysis\\logs201707\\secure-20170702";
+		String fileName = "D:\\log-related\\a日志分析程序\\主成分分析日志\\secure-20170702";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
+		System.out.println("该文件一共有"+fr.getFileNum()+"条日志");
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
-		fr.GenerateFeatureVector(null, 1000);
-		fr.writePattern("C:\\Users\\34791\\Desktop\\loganalysis\\logs201707\\secure-20170702-pattern");
+		System.out.println("生成模式成功");
+		fr.GenerateFeatureVector(null, 300000);
+		System.out.println("生成特征向量成功");
+		fr.writePattern("D:\\log-related\\a日志分析程序\\主成分分析日志\\secure-20170702-pattern");
+		System.out.println("写入模式成功");
+		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
+        segToWrite.add(segmentInformation.logPatternNum);
+		segToWrite.add(segmentInformation.time);
+        segToWrite.add(segmentInformation.timeStamp);
+        segToWrite.add(segmentInformation.codeContent);
+        segToWrite.add(segmentInformation.VectorNum);
+        
+		fr.writeContentBySegment(null, segToWrite);
 	}
 	
 //	@Test
@@ -137,4 +153,12 @@ public class TestCaseNewOne {
 		System.out.println(Arrays.toString(a));
  	}
 	
+//	@Test
+	public void testEnumStr() {
+	    Vector<segmentInformation> tem = new Vector<segmentInformation>() ;
+	    tem.add(segmentInformation.codeContent);
+	    tem.add(segmentInformation.hostName);
+	    
+	    System.out.println(tem.get(0).toString());
+	}
 }

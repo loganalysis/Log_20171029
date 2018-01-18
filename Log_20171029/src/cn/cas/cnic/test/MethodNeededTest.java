@@ -21,7 +21,7 @@ public class MethodNeededTest {
 			fileName = fileArray[0].getAbsolutePath();
 		}
 		System.out.println(fileName);
-		String className = fileName.substring(fileName.lastIndexOf("\\")+1,fileName.indexOf("-"));
+		String className = fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("-"));
 		className = className.substring(0, 1).toUpperCase() + className.substring(1);
 		className += "Factory";
 		className = "cn.cas.cnic.log.formatfactory."+className;

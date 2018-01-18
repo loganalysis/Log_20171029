@@ -2,6 +2,8 @@ package cn.cas.cnic.test;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 import org.junit.After;
@@ -53,7 +55,7 @@ public class TestCase {
 	public void testBreakdown() {
 		FormatFactory ff = new MaillogFactory();
 		FileRead fr = ff.createRead("F:\\DoctorContent\\loganalysis\\logs201707\\maillog-20170702");
-		Vector<HashMap<segmentInformation,String>> fileContent = fr.getFileContent();
+		List<HashMap<segmentInformation,String>> fileContent = fr.getFileContent();
 		for(int i = 0 ; i != fileContent.size()/120 ; ++i) {
 			String str = new String(fileContent.get(i).get(segmentInformation.codeContent));
 			System.out.println(str);
@@ -131,7 +133,7 @@ public class TestCase {
 		fr.writePattern("F:\\DoctorContent\\loganalysis\\logs201707\\cron-20170702.txt");
 	}
 	
-	@Test  //测试反射---得出结论：反射必须使用全名！！！！！！
+//	@Test  //测试反射---得出结论：反射必须使用全名！！！！！！
 	public void testReflect() throws Exception {
 		String fileName = "F:\\DoctorContent\\loganalysis\\logs201707\\maillog-20170702";
 		String className = fileName.substring(fileName.lastIndexOf("\\")+1,fileName.indexOf("-"));
