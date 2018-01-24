@@ -124,6 +124,11 @@ public abstract class FileRead {
 //            }
 //        });
         
+        if(fileName == null) {
+            fileName = getFileName();
+            fileName += "-pattern.txt";
+        }
+        
         File file = new File(fileName);
         FileWriter fw = null;
         BufferedWriter writer = null;
@@ -133,7 +138,7 @@ public abstract class FileRead {
             for(int i = 0 ; i != _logPatterns.size() ; ++i) {
                 Vector<String> tem = _logPatterns.elementAt(i);
                 writer.write("总共有："+_logPatterns.size()+"个日志模式"+"     现在是第："+(i+1)+"个模式"
-                        +" 该模式属于："+"type"+(i+1));
+                        +" 该模式属于："+"type"+(i));
                 writer.newLine();
                 if(tem.size()>1) {
                     writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1),"="));   //这里生成了带有*的模式的结果,而且结果对于=号进行了分开
@@ -177,6 +182,7 @@ public abstract class FileRead {
                 fileName += "_";
                 fileName += seg.toString();
             }
+            fileName += ".txt";
         }
         File file = new File(fileName);
         FileWriter fw = null;
@@ -255,7 +261,7 @@ public abstract class FileRead {
         System.out.println("一共有"+_inputMatirx.size()+"个向量"+"\t"+"一共有"+_logPatterns.size()+"个模式");
         //将向量写到指定的文件中
         String inputFileName = getFileName();
-        String VectorName = inputFileName +"向量文件";
+        String VectorName = inputFileName +"VectorFile"+"_"+time/1000+"s_Vector";
         if(fileName != null)
             VectorName = fileName;
         //如果没有文件夹，先新建一个文件夹
