@@ -19,8 +19,8 @@ public class SecureRead extends FileRead{
 		String[] strs = str.split(" ");
 		StringBuilder sb = new StringBuilder();
 		for (String s : strs) {
-			if(s.endsWith(",") || s.endsWith(":"))
-				s = s.substring(0, s.length()-1);
+//			if(s.endsWith(",") || s.endsWith(":"))
+//				s = s.substring(0, s.length()-1);
 			String[] strArray = s.split("=");
 			if(strArray.length == 2) {
 				sb.setLength(0);

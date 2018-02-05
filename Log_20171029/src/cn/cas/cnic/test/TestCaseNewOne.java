@@ -127,15 +127,15 @@ public class TestCaseNewOne {
 	
 	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-		String fileName = "D:\\log-related\\a日志分析程序\\主成分分析日志\\messages-20170702";
+		String fileName = "F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\maillog-20170702";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		System.out.println("该文件一共有"+fr.getFileNum()+"条日志");
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
-		System.out.println("生成模式成功");
+//		System.out.println("生成模式成功");
 		fr.GenerateFeatureVector(null, 300000);
-		System.out.println("生成特征向量成功");
+//		System.out.println("生成特征向量成功");
 		fr.writePattern(null);
-		System.out.println("写入模式成功");
+//		System.out.println("写入模式成功");
 		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
         segToWrite.add(segmentInformation.logPatternNum);
 		segToWrite.add(segmentInformation.time);

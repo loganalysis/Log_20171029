@@ -23,6 +23,10 @@ public class IdenticalWordRate {
 	 public static double getRate(Vector<String> a, Vector<String> b, matchMethod MM) {
 //		 Vector<String> a = breakdown(s1);
 //		 Vector<String> b = breakdown(s2);
+//	     if(a.get(0).endsWith(":") && a.get(0).equals(b.get(0)))  //这里增加如果开头是字母加冒号，则是一类
+//	         return 1.0;
+//	     if(a.size()>1 && b.size()>1 && a.get(1).endsWith(":") && a.get(0).equals(b.get(0)) && a.get(1).equals(b.get(1)))
+//	         return 1.0;
 		 Vector<String> v3 = null;
 		 switch (MM) {
 		 case LCS1:

@@ -168,6 +168,7 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
+        System.out.println("生成日志模式： "+fileName+" 成功");
     }
     /**
      * 根据段信息的键写值到文件中的函数,信息来自读入并处理后的内容————_fileContent
@@ -214,6 +215,7 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
+        System.out.println("写入段信息： "+fileName+" 成功");
     }
     /**
      * 根据时间段生成特征向量的函数,该函数调用完成后,_fileContent的内容变化了，按照时间顺序排列
@@ -305,6 +307,7 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
+        System.out.println("生成特征向量文件： "+VectorName+" 成功");
     }
     /**
      * 模式持久化日志模式的函数，测试时公有，最后要变成私有！！！！！！！！******************
