@@ -1,5 +1,6 @@
 package cn.cas.cnic.test;
 
+import java.io.Console;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.text.ParseException;
@@ -125,25 +126,46 @@ public class TestCaseNewOne {
 		System.out.println(fr.getPatternNum());
 	}
 	
-	@Test  //测试时间戳和时间转化函数
+//	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-		String fileName = "F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\maillog-20170702";
+//		String fileName = "F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\maillog-20170702";
+		String fileName = "C:\\Users\\dell\\Desktop\\cron\\cron-20171231";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		System.out.println("该文件一共有"+fr.getFileNum()+"条日志");
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
 //		System.out.println("生成模式成功");
-		fr.GenerateFeatureVector(null, 300000);
-//		System.out.println("生成特征向量成功");
-		fr.writePattern(null);
-//		System.out.println("写入模式成功");
-		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
-        segToWrite.add(segmentInformation.logPatternNum);
-		segToWrite.add(segmentInformation.time);
-        segToWrite.add(segmentInformation.timeStamp);
-        segToWrite.add(segmentInformation.codeContent);
-        segToWrite.add(segmentInformation.VectorNum);
-        
-		fr.writeContentBySegment(null, segToWrite);
+		//下面生成特征向量，同时写出一个文件
+//		fr.GenerateFeatureVector(null, 300000);
+		//下面写出文件模式
+//		fr.writePattern(null);
+		//下面根据输入字符串的段位将对应的内容写到一个文件内
+//		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
+//        segToWrite.add(segmentInformation.logPatternNum);
+//		segToWrite.add(segmentInformation.time);
+//        segToWrite.add(segmentInformation.timeStamp);
+//        segToWrite.add(segmentInformation.codeContent);
+//        segToWrite.add(segmentInformation.VectorNum);
+//        
+//		fr.writeContentBySegment(null, segToWrite);
+	}
+	
+	@Test //根据当前文件夹位置生成持久化文件的函数
+	public void GenPerFun() {
+	    //输入文件夹！
+	    String fileName = "C:\\Users\\dell\\Desktop\\cron";
+	    File file = new File(fileName);
+	    File[] fileArray=file.listFiles();
+        if(fileArray!=null){
+            for (int i = 0; i < fileArray.length; i++) {
+                File temFile = fileArray[i];
+                if(temFile.isDirectory())
+                    continue;
+                System.out.println(temFile.toString());
+                FileRead fr = MethodNeededTest.getFileReadFromFileName(temFile.toString());
+                System.out.println("该文件一共有"+fr.getFileNum()+"条日志");
+                fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCSNew);
+            }
+        } 
 	}
 	
 //	@Test

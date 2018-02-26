@@ -69,7 +69,10 @@ public abstract class FileRead {
     public void getPattern(double threshold , segmentInformation SI, IdenticalWordRate.matchMethod MM) {
         _threshold = threshold;
         _logPatterns.clear();
-//      PatternUnpersistence();  //进行模式反持久化****************测试阶段函数
+        
+        PatternUnpersistence();  //进行模式反持久化****************测试阶段函数
+        System.out.println("读取持久化文件后日志模式条数是："+_logPatterns.size());
+      
         for(int i = 0 ; i != _fileContent.size() ; ++i) {
             boolean isMatched = false;  //是否匹配了，默认没有匹配
             String compareLog = _fileContent.get(i).get(SI);  //用于比较的日志内容
@@ -94,7 +97,8 @@ public abstract class FileRead {
             }
 //          System.out.println("一个有"+_fileContent.size()+"，  现在处理第"+i);
         }
-//      PatternPersistence();  //进行模式持久化****************测试阶段函数
+        System.out.println("模式匹配后日志模式条数是："+_logPatterns.size());
+        PatternPersistence();  //进行模式持久化****************测试阶段函数
     }
     //后面是辅助测试的公有函数
     public int getPatternNum() {
@@ -114,7 +118,7 @@ public abstract class FileRead {
     }
     /**
      * 将模式写入到指定文件的方法
-     * @param fileName
+     * @param fileName 写出文件的路径和名称，为null则默认当前文件名加上"-pattern.txt"为写出文件
      */
     public void writePattern(String fileName) {
         //写之前我先将日志模式按照数目大小排一下序
