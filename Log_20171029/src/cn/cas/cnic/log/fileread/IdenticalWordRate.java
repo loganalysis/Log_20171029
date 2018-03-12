@@ -1,9 +1,14 @@
 package cn.cas.cnic.log.fileread;
 import java.util.Vector;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import cn.cas.cnic.log4j.Test;
 
 public class IdenticalWordRate {
+	private static Logger logger = LogManager.getLogger(IdenticalWordRate.class.getName());  
+
 	public static int counter1 = 0;
 	public static int counter2 = 0;
 	
@@ -42,9 +47,9 @@ public class IdenticalWordRate {
 			 v3 = cn.cas.cnic.log.logpattern.LCS.getLCS(a,b);
 			 break;
 		 }
-//		 System.out.println(a);
-//		 System.out.println(b);
-//		 System.out.println(v3);
+//		 logger.debug(a);
+//		 logger.debug(b);
+//		 logger.debug(v3);
  
 		 double rate = v3.size()*2.0/(a.size()+b.size()); 
 		 return rate;
@@ -97,7 +102,7 @@ public class IdenticalWordRate {
 	     }
 	     while (ci >= bi && ci < v1.size() && cj >= bj && cj < v2.size() && !found)
 	     {
-//	      System.out.println("("+ci+","+cj+") bi:"+bi+" bj:"+bj+" l:"+l);
+//	      logger.debug("("+ci+","+cj+") bi:"+bi+" bj:"+bj+" l:"+l);
 	      counter2++;
 	      if (v1.elementAt(ci).equals(v2.elementAt(cj)))
 	      {
@@ -226,11 +231,11 @@ public class IdenticalWordRate {
 			 return result;
 		 
 		 for(int i=0 ; i!=v1.size() ; ++i) {
-//			 System.out.println(v1.get(i)+v2.get(i));
+//			 logger.debug(v1.get(i)+v2.get(i));
 			 if(v1.get(i).equals(v2.get(i)))    //java不能用==  因为==比较的是地址！
 				 result.add(v1.get(i));
 		 }
-//		 System.out.println(result);
+//		 logger.debug(result);
 		 return result;
 	 }
 	 
@@ -255,7 +260,7 @@ public class IdenticalWordRate {
 		  
 		  v3.add("a");
 		  
-		  System.out.println(v3);
+		  logger.debug(v3);
 		  
 //		  System.out.println(""+v3.size()+" :: "+v3.toString());
 //		  if (v3.size()*4 >= (a.size()+a.size()))

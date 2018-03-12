@@ -17,8 +17,12 @@ import cn.cas.cnic.log.fileread.IdenticalWordRate.matchMethod;
 import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
 import cn.cas.cnic.log.formatfactory.FormatFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TestCaseNewOne {
+	private static Logger logger = LogManager.getLogger(TestCaseNewOne.class.getName()); 
+	
 	@Before
 	public void prepare(){
         System.out.println(" 开始进行测试：");
@@ -128,25 +132,27 @@ public class TestCaseNewOne {
 	
 //	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-//		String fileName = "F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\maillog-20170702";
-		String fileName = "C:\\Users\\dell\\Desktop\\cron\\cron-20171231";
+		String fileName = "F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\secure-20170702";
+//		String fileName = "C:\\Users\\dell\\Desktop\\secure\\secure-20170709";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
-		System.out.println("该文件一共有"+fr.getFileNum()+"条日志");
+		logger.info("该文件一共有"+fr.getFileNum()+"条日志");
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
 //		System.out.println("生成模式成功");
 		//下面生成特征向量，同时写出一个文件
-//		fr.GenerateFeatureVector(null, 300000);
+		fr.GenerateFeatureVector("F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\statisticsTheData_secure", 300000);
 		//下面写出文件模式
-//		fr.writePattern(null);
+		fr.writePattern(null);
 		//下面根据输入字符串的段位将对应的内容写到一个文件内
-//		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
-//        segToWrite.add(segmentInformation.logPatternNum);
-//		segToWrite.add(segmentInformation.time);
-//        segToWrite.add(segmentInformation.timeStamp);
-//        segToWrite.add(segmentInformation.codeContent);
-//        segToWrite.add(segmentInformation.VectorNum);
-//        
-//		fr.writeContentBySegment(null, segToWrite);
+		Vector<segmentInformation> segToWrite = new Vector<segmentInformation>();
+        segToWrite.add(segmentInformation.logPatternNum);
+		segToWrite.add(segmentInformation.time);
+        segToWrite.add(segmentInformation.timeStamp);
+        segToWrite.add(segmentInformation.hostName);
+        segToWrite.add(segmentInformation.codeSourse);
+        segToWrite.add(segmentInformation.codeContent);
+        segToWrite.add(segmentInformation.VectorNum);
+        
+		fr.writeContentBySegment(null, segToWrite);
 	}
 	
 	@Test //根据当前文件夹位置生成持久化文件的函数
@@ -158,7 +164,10 @@ public class TestCaseNewOne {
         if(fileArray!=null){
             for (int i = 0; i < fileArray.length; i++) {
                 File temFile = fileArray[i];
-                if(temFile.isDirectory())
+                String filename = temFile.getName();    //得到现在正在处理的文件名
+                String suffix = filename.substring(filename.lastIndexOf(".") + 1);    //得到文件后缀
+//                logger.debug("文件后缀[{}]",suffix);
+                if(temFile.isDirectory() || filename.lastIndexOf(".") != -1)
                     continue;
                 System.out.println(temFile.toString());
                 FileRead fr = MethodNeededTest.getFileReadFromFileName(temFile.toString());

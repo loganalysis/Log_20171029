@@ -18,6 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.text.Segment;
 
 import cn.cas.cnic.log.assistent.TimeOfLog;
@@ -25,6 +28,8 @@ import cn.cas.cnic.log.assistent.TimeOfLog;
 //import ReadLog.segmentInformation;
 
 public abstract class FileRead {
+	static final Logger logger = LogManager.getLogger(FileRead.class.getName());
+	
     protected String _fileName = null;  //< 用于存储文件的名字
     protected double _threshold = 0.5;  //< 用于存储日志模式比对的阈值
     protected List<HashMap<segmentInformation,String>> _fileContent
@@ -50,8 +55,9 @@ public abstract class FileRead {
      * 用来将一行日志分开的工具函数
      * @param 需要被分开的日志行：LogLine
      * @return 日志分开后的一个键值对：HashMap<segmentInformation,String>
+     * @throws ParseException 
      */
-    abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine);
+    abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) throws ParseException;
     /**
      * 构造函数
      * @param fileName
@@ -71,16 +77,17 @@ public abstract class FileRead {
         _logPatterns.clear();
         
         PatternUnpersistence();  //进行模式反持久化****************测试阶段函数
-        System.out.println("读取持久化文件后日志模式条数是："+_logPatterns.size());
+        logger.info("读取持久化文件后日志模式条数是："+_logPatterns.size());
       
         for(int i = 0 ; i != _fileContent.size() ; ++i) {
             boolean isMatched = false;  //是否匹配了，默认没有匹配
             String compareLog = _fileContent.get(i).get(SI);  //用于比较的日志内容
-//          System.out.println(compareLog);
+            String sourceLog = "";
+//          logger.debug(compareLog);
             for(int j = 0 ; j != _logPatterns.size() ; ++j) {
-                String sourceLog = _logPatterns.get(j).get(0);
+                sourceLog = _logPatterns.get(j).get(0);
                 double rate = IdenticalWordRate.getRate(breakdown(sourceLog), breakdown(compareLog), MM);  //这里用到抽象方法！
-//              System.out.println(rate);
+//              logger.debug(rate);
                 if( rate > threshold || rate == threshold) {
                     isMatched = true;
                     _logPatterns.get(j).add(compareLog);
@@ -89,15 +96,16 @@ public abstract class FileRead {
                 }
             }
             if(!isMatched) {  //没有匹配的，就新增加一个模式组别
+//            	logger.debug(compareLog+'\n'+sourceLog);
                 Vector<String> temStr = new Vector<String>();
                 temStr.add(compareLog);
                 _logPatterns.add(temStr);
                 _fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(_logPatterns.size()-1));  //设置第i个数据的模式   2017-12-29
-//              System.out.println("增加了一个模式，现在模式有"+logPatterns.size());
+//              logger.debug("增加了一个模式，现在模式有"+logPatterns.size());
             }
-//          System.out.println("一个有"+_fileContent.size()+"，  现在处理第"+i);
+//          logger.debug("一个有"+_fileContent.size()+"，  现在处理第"+i);
         }
-        System.out.println("模式匹配后日志模式条数是："+_logPatterns.size());
+        logger.info("模式匹配后日志模式条数是："+_logPatterns.size());
         PatternPersistence();  //进行模式持久化****************测试阶段函数
     }
     //后面是辅助测试的公有函数
@@ -172,7 +180,7 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
-        System.out.println("生成日志模式： "+fileName+" 成功");
+        logger.info("生成日志模式： "+fileName+" 成功");
     }
     /**
      * 根据段信息的键写值到文件中的函数,信息来自读入并处理后的内容————_fileContent
@@ -219,11 +227,11 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
-        System.out.println("写入段信息： "+fileName+" 成功");
+        logger.info("写入段信息： "+fileName+" 成功");
     }
     /**
      * 根据时间段生成特征向量的函数,该函数调用完成后,_fileContent的内容变化了，按照时间顺序排列
-     * @param fileName 保存日志特征向量的文件名，传入参数为null时会默认给出一个文件名
+     * @param fileName 保存日志特征向量的文件夹的名字，传入参数为null时会默认给出一个文件名
      * @param time  单位是毫秒
      * @throws ParseException 
      */
@@ -236,7 +244,7 @@ public abstract class FileRead {
                 return (int)(leftLong - rightLong);
             }
         });
-        System.out.println("排序后文件数目："+_fileContent.size());
+        logger.info("排序后文件数目："+_fileContent.size());
 //      for(int i = 0 ; i != _fileContent.size()-1; ++ i) {  //这个循环测试每个日志输出的时间
 //          TimeOfLog.timeInterval(_fileContent.get(i).get(segmentInformation.time),
 //                                 _fileContent.get(i+1).get(segmentInformation.time));
@@ -249,14 +257,14 @@ public abstract class FileRead {
         for(int i = 0 ; i != _fileContent.size()-1 ; ++i) {
             if( (Long.valueOf(_fileContent.get(i).get(segmentInformation.timeStamp))-initTime) < time) {
                 //如果时间不到设定值，则对应类型加一
-//              System.out.println(_fileContent.get(i).get(segmentInformation.logPatternNum)+"一共有模式数目："+temSave.length);
+//              logger.debug(_fileContent.get(i).get(segmentInformation.logPatternNum)+"一共有模式数目："+temSave.length);
                 temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]++;
                 _fileContent.get(i).put(segmentInformation.VectorNum,String.valueOf(_inputMatirx.size()));   // 将向量的数目存进去
-//              System.out.println(temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]);
-//              System.out.println(Arrays.toString(temSave));
+//              logger.debug(temSave[Integer.valueOf(_fileContent.get(i).get(segmentInformation.logPatternNum))]);
+//              logger.debug(Arrays.toString(temSave));
             }else {
                 //如果时间到了，就增加一个向量，然后就可以新建一个向量了！
-//              System.out.println(Arrays.toString(temSave));
+//              logger.debug(Arrays.toString(temSave));
                 _inputMatirx.addElement(temSave);
                 temSave = new double[_logPatterns.size()];   //重置模式向量
                 initTime = Long.valueOf(_fileContent.get(i).get(segmentInformation.timeStamp));  //重置初始时间
@@ -264,7 +272,7 @@ public abstract class FileRead {
             }
         }
         //下面测试用，打印一下
-        System.out.println("一共有"+_inputMatirx.size()+"个向量"+"\t"+"一共有"+_logPatterns.size()+"个模式");
+        logger.info("一共有"+_inputMatirx.size()+"个向量"+"\t"+"一共有"+_logPatterns.size()+"个模式");
         //将向量写到指定的文件中
         String inputFileName = getFileName();
         String VectorName = inputFileName +"VectorFile"+"_"+time/1000+"s_Vector";
@@ -276,7 +284,7 @@ public abstract class FileRead {
             dir.mkdir();
         //然后再将文件名加入
         VectorName = VectorName + "\\" + "Vector_"+time/1000+"s.txt";
-        System.out.println(VectorName);
+        logger.debug(VectorName);
         Iterator<double[]> iterator = _inputMatirx.iterator();
         double[] temWrite = new double[_logPatterns.size()];
         File file = new File(VectorName);
@@ -311,13 +319,13 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
-        System.out.println("生成特征向量文件： "+VectorName+" 成功");
+        logger.info("生成特征向量文件： "+VectorName+" 成功");
     }
     /**
      * 模式持久化日志模式的函数，测试时公有，最后要变成私有！！！！！！！！******************
      */
     public void PatternPersistence() {
-        String FileClassName = _fileName.substring(_fileName.lastIndexOf("\\")+1,_fileName.indexOf("-"));
+        String FileClassName = _fileName.substring(_fileName.lastIndexOf("\\")+1,_fileName.lastIndexOf("-"));
         FileClassName = FileClassName.substring(0, 1).toUpperCase() + FileClassName.substring(1);
         String PersistenceName = _fileName.substring(0,_fileName.lastIndexOf("\\")+1) + FileClassName + "Persistecne";
         //如果没有文件夹，先新建一个文件夹
@@ -326,7 +334,7 @@ public abstract class FileRead {
             dir.mkdir();
         //然后再将文件名加入
         PersistenceName = PersistenceName + "\\" + FileClassName + "Pattern.txt";
-        System.out.println(PersistenceName);
+        logger.debug(PersistenceName);
         
         File file = new File(PersistenceName);
         FileWriter fw = null;
@@ -336,11 +344,12 @@ public abstract class FileRead {
             writer = new BufferedWriter(fw);
             for(int i = 0 ; i != _logPatterns.size() ; ++i) {
                 Vector<String> tem = _logPatterns.elementAt(i);
-                if(tem.size()>1) {
-                    writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1),"="));   //这里生成了带有*的模式的结果,而且结果对于=号进行了分开
-                }
-                else
-                    writer.write(tem.elementAt(0));
+//                if(tem.size()>1) {
+//                    writer.write(generateLinePattern(tem.elementAt(0), tem.elementAt(1),"="));   //这里生成了带有*的模式的结果,而且结果对于=号进行了分开
+//                }
+//                else
+//                    writer.write(tem.elementAt(0));
+                writer.write(tem.elementAt(0));  //注释上面是为了禁用通配符。   2018-2-27
                 writer.newLine();//换行
             }
             writer.flush();
@@ -361,24 +370,24 @@ public abstract class FileRead {
      * 模式反持久化日志模式的函数，测试时公有，最后要变成私有！！！！！！！！******************
      */
     public void PatternUnpersistence() {
-        String FileClassName = _fileName.substring(_fileName.lastIndexOf("\\")+1,_fileName.indexOf("-"));
+        String FileClassName = _fileName.substring(_fileName.lastIndexOf("\\")+1,_fileName.lastIndexOf("-"));
         FileClassName = FileClassName.substring(0, 1).toUpperCase() + FileClassName.substring(1);
         String PersistenceName = _fileName.substring(0,_fileName.lastIndexOf("\\")+1) + FileClassName + "Persistecne";
         PersistenceName = PersistenceName + "\\" + FileClassName + "Pattern.txt";
-        System.out.println(PersistenceName);
+//        logger.debug("需要读取的文件类型名[{}]",PersistenceName);
         
         File file = new File(PersistenceName);
         if(file.exists()) {
-            System.out.println("存在文件"+file.getName());
+            logger.info("存在持久化文件文件"+file.getName());
             BufferedReader reader = null;
             try {
-//                      System.out.println("以行为单位读取文件内容，一次读一整行：");
+//                      logger.debug("以行为单位读取文件内容，一次读一整行：");
                 reader = new BufferedReader(new FileReader(file));
                 String tempString = null;
 //                      int line = 1;
                 // 一次读入一行，直到读入null为文件结束
                 while ((tempString = reader.readLine()) != null) {
-                    //System.out.println("line " + line + ": " + tempString);  //< 显示行号
+                    //logger.debug("line " + line + ": " + tempString);  //< 显示行号
                     Vector<String> temVector = new Vector<String>();
                     temVector.add(tempString);
                     _logPatterns.add(temVector);
@@ -395,6 +404,9 @@ public abstract class FileRead {
                     }
                 }
             }
+        }
+        else {
+        	logger.info("不存在持久化文件文件"+file.getName());
         }
     }
     /**
@@ -424,14 +436,21 @@ public abstract class FileRead {
         
         BufferedReader reader = null;
         try {
-//                          System.out.println("以行为单位读取文件内容，一次读一整行：");
+//                          logger.debug("以行为单位读取文件内容，一次读一整行：");
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
 //                          int line = 1;
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
-//                              System.out.println("line " + line + ": " + tempString);  //< 显示行号
-                HashMap<segmentInformation, String> temHashMap = dealLogByLine(tempString);
+//                              logger.debug("line " + line + ": " + tempString);  //< 显示行号
+                HashMap<segmentInformation, String> temHashMap = null;
+				try {
+					temHashMap = dealLogByLine(tempString);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					logger.info("解析文件[{}]中的的语句[{}]出现错误",file,tempString);
+					e.printStackTrace();
+				}
                 if(temHashMap != null)
                     _fileContent.add(temHashMap);  //将一行日志分开成为含有题目的键值对
 //                              line++;

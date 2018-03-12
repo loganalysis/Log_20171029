@@ -37,7 +37,7 @@ public class MaillogRead extends FileRead{
 	}
 	
 	@Override
-	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
+	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) throws ParseException {
 		String[] splitLine = LogLine.split("[ ]+");
 		if(splitLine.length < 5)   //可能出现空行，或者只有时间的日志！ 2018-1-2
 			return null;
@@ -54,9 +54,7 @@ public class MaillogRead extends FileRead{
 			timeStamp = simpleDateFormat.parse(time11).getTime();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			
-			e.printStackTrace();
-			return null;
+			throw e;
 		}
 		
 //		System.out.println(String.valueOf(timeStamp));

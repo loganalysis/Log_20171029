@@ -9,10 +9,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cn.cas.cnic.log.fileread.FileRead;
 import cn.cas.cnic.log.formatfactory.FormatFactory;
+import cn.cas.cnic.log4j.Test;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MethodNeededTest {
+	private static Logger logger = LogManager.getLogger(MethodNeededTest.class.getName());  
+	
+	
 	public static FileRead getFileReadFromFileName(String fileName) {
 		String oringalName = fileName;
 		File file = new File(fileName);
@@ -20,12 +30,12 @@ public class MethodNeededTest {
 			File[] fileArray=file.listFiles();
 			fileName = fileArray[0].getAbsolutePath();
 		}
-		System.out.println(fileName);
+		logger.debug(fileName);
 		String className = fileName.substring(fileName.lastIndexOf("\\")+1,fileName.lastIndexOf("-"));
 		className = className.substring(0, 1).toUpperCase() + className.substring(1);
 		className += "Factory";
 		className = "cn.cas.cnic.log.formatfactory."+className;
-//		System.out.println(className);
+//		logger.debug(className);
 		Class<?> c = null;
 		try {
 			c = Class.forName(className);
@@ -110,12 +120,12 @@ public class MethodNeededTest {
 		String time11 = MonthMap.get(t1Str[0]) + " " +t1Str[1] +  " "  + t1Str[2];
 		String time22 = MonthMap.get(t2Str[0]) + " " +t2Str[1] +  " "  + t2Str[2];
 		
-		System.out.println(time11+"\t"+time22);
+		logger.debug(time11+"\t"+time22);
 		
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM dd HH:mm:ss");
         long t1l = simpleDateFormat.parse(time11).getTime();
         long t2l = simpleDateFormat.parse(time22).getTime();
-//        System.out.println(t1+"\t"+t2+"\t"+(t2l-t1l));
+//        logger.debug(t1+"\t"+t2+"\t"+(t2l-t1l));
         return t2l-t1l;
 	}
 }

@@ -76,4 +76,33 @@ public class SecureRead extends FileRead{
 		temMap.put(segmentInformation.codeContent, segment.toString());
 		return temMap;
 	}
+	
+	//测试breakdown函数
+//	public static void main(String[] args) {
+//		String S1 = "Registered Authentication Agent for |*| |*| |*| |*| |*| |*| |*| |*| |*| |*| |*| |*| locale zh_CN.UTF-8)";
+//		String S2 = "Registered Authentication Agent for |*| |*| |*| |*| |*| |*| |*| |*| |*| |*| |*| |*| locale zh_CN.UTF-8)";
+//		double rate = IdenticalWordRate.getRate(breakdown1(S1), breakdown1(S2), IdenticalWordRate.matchMethod.LCS2);  //这里用到抽象方法！
+//		System.out.println(rate);
+//	}
+//	
+//	public static Vector<String> breakdown1(String str) {
+//		Vector<String> result = new Vector<String>();
+//		String[] strs = str.split(" ");
+//		StringBuilder sb = new StringBuilder();
+//		for (String s : strs) {
+////			if(s.endsWith(",") || s.endsWith(":"))
+////				s = s.substring(0, s.length()-1);
+//			String[] strArray = s.split("=");
+//			if(strArray.length == 2) {
+//				sb.setLength(0);
+//				sb.append(strArray[0]).append("=");
+//				result.add(sb.toString());   
+////				result.add(strArray[1]);
+//			}else {
+//				result.add(s);
+//			}
+//		}
+//		return result;
+//	}
+	
 }
