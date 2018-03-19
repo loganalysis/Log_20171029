@@ -42,7 +42,7 @@ public abstract class FileRead {
         hostName,  //< 日志的主机名字符串段位的键值
         codeSourse,  //< 日志的代码源头字符串段位的键值
         codeContent,   //< 日志的代码日志内容字符串段位的键值
-        logPatternNum,  //< 用来存储一条日志对于的类型号
+        logPatternNum,  //< 用来存储一条日志对应的类型号
         VectorNum;    //< 存储生成向量对于的向量数
     }
     /**
@@ -56,8 +56,9 @@ public abstract class FileRead {
      * @param 需要被分开的日志行：LogLine
      * @return 日志分开后的一个键值对：HashMap<segmentInformation,String>
      * @throws ParseException 
+     * @throws Exception 
      */
-    abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) throws ParseException;
+    abstract protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) throws Exception;
     /**
      * 构造函数
      * @param fileName
@@ -82,15 +83,23 @@ public abstract class FileRead {
         for(int i = 0 ; i != _fileContent.size() ; ++i) {
             boolean isMatched = false;  //是否匹配了，默认没有匹配
             String compareLog = _fileContent.get(i).get(SI);  //用于比较的日志内容
+            String compareCodeSource = _fileContent.get(i).get(segmentInformation.codeSourse);  //比较的代码源程序名字
             String sourceLog = "";
 //          logger.debug(compareLog);
             for(int j = 0 ; j != _logPatterns.size() ; ++j) {
-                sourceLog = _logPatterns.get(j).get(0);
+                String logSourchandContent = _logPatterns.get(j).get(0);
+            	sourceLog = logSourchandContent.substring(logSourchandContent.indexOf("*")+1);
+                String sourceCodeSource = logSourchandContent.split("\\*")[0];
+//                if(!sourceCodeSource.equals(compareCodeSource)) {   //如果代码源头就不相等，肯定不是一组，就直接进行下一轮比较即可，此代码段注释则说明还是使用原来分类法
+////                	logger.debug(sourceCodeSource+"\t"+compareCodeSource);
+//                	continue;
+//                }
+//                logger.debug(sourceLog+"\t"+compareLog);
                 double rate = IdenticalWordRate.getRate(breakdown(sourceLog), breakdown(compareLog), MM);  //这里用到抽象方法！
 //              logger.debug(rate);
                 if( rate > threshold || rate == threshold) {
                     isMatched = true;
-                    _logPatterns.get(j).add(compareLog);
+                    _logPatterns.get(j).add(compareLog);   //这里比较的日志没有加上日志的源头    2018-3-12 (以后可以加上或注释这句话)
                     _fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(j));  //设置第i个数据的模式   2017-12-29
                     break;
                 }
@@ -98,12 +107,18 @@ public abstract class FileRead {
             if(!isMatched) {  //没有匹配的，就新增加一个模式组别
 //            	logger.debug(compareLog+'\n'+sourceLog);
                 Vector<String> temStr = new Vector<String>();
-                temStr.add(compareLog);
+                String stringToAdd = compareCodeSource+"*"+compareLog;
+//                logger.debug(stringToAdd);
+                temStr.add(stringToAdd);
                 _logPatterns.add(temStr);
                 _fileContent.get(i).put(segmentInformation.logPatternNum,String.valueOf(_logPatterns.size()-1));  //设置第i个数据的模式   2017-12-29
 //              logger.debug("增加了一个模式，现在模式有"+logPatterns.size());
             }
-//          logger.debug("一个有"+_fileContent.size()+"，  现在处理第"+i);
+//            if(i%10000 == 0) {
+//            	logger.debug("一个有"+_fileContent.size()+"，  现在处理第"+i);
+//            	logger.info("模式匹配后日志模式条数是："+_logPatterns.size());
+//            	PatternPersistence();
+//            }
         }
         logger.info("模式匹配后日志模式条数是："+_logPatterns.size());
         PatternPersistence();  //进行模式持久化****************测试阶段函数
@@ -180,7 +195,7 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
-        logger.info("生成日志模式： "+fileName+" 成功");
+        logger.info("写入日志模式： ["+fileName+"]出口");
     }
     /**
      * 根据段信息的键写值到文件中的函数,信息来自读入并处理后的内容————_fileContent
@@ -205,12 +220,22 @@ public abstract class FileRead {
             writer = new BufferedWriter(fw);
             while(iterator.hasNext()){
                 HashMap<segmentInformation,String> tmp = iterator.next();
-                for(segmentInformation seg : SI) {
-                    if(tmp.containsKey(seg))
-                        writer.write(tmp.get(seg));
-                    else
-                        writer.write("null");
-                    writer.write(" ");
+                try {
+                	for(int i = 0 ; i != SI.size() ; ++i) {
+                		segmentInformation seg = SI.elementAt(i);
+                        if(tmp.containsKey(seg))
+                            writer.write(tmp.get(seg));
+                        else {
+                        	logger.warn("文件[{}]中的信息[{}]没有段信息[{}]",_fileName,tmp,seg);
+                        	Exception e = new Exception("通过段位写该行失败！");
+                			throw e;
+                        }
+                        if(i != SI.size()-1)
+                        	writer.write("*");
+                    }
+                }catch(Exception e) {
+                	e.printStackTrace();
+                	continue;
                 }
                 writer.newLine();//换行
             }
@@ -227,7 +252,7 @@ public abstract class FileRead {
                 e.printStackTrace();
             }
         }
-        logger.info("写入段信息： "+fileName+" 成功");
+        logger.info("写入段信息：[ "+fileName+"]出口");
     }
     /**
      * 根据时间段生成特征向量的函数,该函数调用完成后,_fileContent的内容变化了，按照时间顺序排列
@@ -446,14 +471,13 @@ public abstract class FileRead {
                 HashMap<segmentInformation, String> temHashMap = null;
 				try {
 					temHashMap = dealLogByLine(tempString);
-				} catch (ParseException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					logger.info("解析文件[{}]中的的语句[{}]出现错误",file,tempString);
+					logger.warn("解析文件[{}]中的的语句[{}]出现错误",file,tempString);
 					e.printStackTrace();
+					continue;
 				}
-                if(temHashMap != null)
-                    _fileContent.add(temHashMap);  //将一行日志分开成为含有题目的键值对
-//                              line++;
+                _fileContent.add(temHashMap);  //将一行日志分开成为含有题目的键值对
             }
             reader.close();
         } catch (IOException e) {

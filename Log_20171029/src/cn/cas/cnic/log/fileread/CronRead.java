@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import cn.cas.cnic.log.assistent.TimeOfLog;
+import cn.cas.cnic.log.fileread.FileRead.segmentInformation;
 
 public class CronRead extends FileRead{
 	public CronRead(String fileName) {
@@ -22,10 +23,12 @@ public class CronRead extends FileRead{
 	}
 	
 	@Override //对于Cron类的日志分类，第四个标签最后可能没有分号！
-	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
+	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) throws Exception {
 		String[] splitLine = LogLine.split("[ ]+");
-		if(splitLine.length < 5)   //可能出现空行，或者只有时间的日志！ 2018-1-2
-			return null;
+		if(splitLine.length < 5) {  //可能出现空行，或者只有时间的日志！ 2018-1-2
+			Exception e = new Exception("此行日志解析时出现长度不够的异常!"); 
+			throw e;
+		}
 		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
 		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
 		//第一个到第三个小段是时间段     time
@@ -52,7 +55,11 @@ public class CronRead extends FileRead{
 		//第四小段是主机名段   hostname
 		temMap.put(segmentInformation.hostName, splitLine[3]);
 		//第五段到第一个出现的“冒号”是代码源头段  codeSourse   注意：这个段位对于Cron日志来说，必定有，但是最后可能不是冒号结束
-		temMap.put(segmentInformation.codeSourse, splitLine[4]);
+//		temMap.put(segmentInformation.codeSourse, splitLine[4]);
+		String codeSource = splitLine[4].split("\\[")[0];
+		if(codeSource.endsWith(":"))
+    		codeSource = codeSource.substring(0,codeSource.length() - 1);
+		temMap.put(segmentInformation.codeSourse, codeSource);
 		//剩余的部分是需要关注分类的代码内容段    codeContent
 		int i = 5;
 		segment.setLength(0);

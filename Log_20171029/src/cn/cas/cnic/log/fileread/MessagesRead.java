@@ -35,10 +35,12 @@ public class MessagesRead extends FileRead{
 	}
 	
 	@Override
-	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) {
+	protected HashMap<segmentInformation,String> dealLogByLine(String LogLine) throws Exception {
 		String[] splitLine = LogLine.split("[ ]+");
-		if(splitLine.length < 5)   //可能出现空行，或者只有时间的日志！ 2018-1-2
-			return null;
+		if(splitLine.length < 5) {  //可能出现空行，或者只有时间的日志！ 2018-1-2
+			Exception e = new Exception("此行日志解析时出现长度不够的异常!"); 
+			throw e;
+		}
 		HashMap<segmentInformation,String> temMap = new HashMap<segmentInformation,String>();
 		StringBuilder segment = new StringBuilder();   //创建一个StringBuilder，用来存储没次的临时段位
 		//第一个到第三个小段是时间段     time
@@ -62,9 +64,24 @@ public class MessagesRead extends FileRead{
 		temMap.put(segmentInformation.hostName, splitLine[3]);
 		//第五段到第一个出现的“冒号”是代码源头段  codeSourse   
 		int i = 4;
-		if(splitLine[i].endsWith(":")) {
-			temMap.put(segmentInformation.codeSourse, splitLine[i]);
-			++i;
+		try {
+			if(splitLine[i].endsWith(":")) {
+				String codeSource = splitLine[i].split("\\[")[0];
+				if(codeSource.endsWith(":"))
+		    		codeSource = codeSource.substring(0,codeSource.length() - 1);
+				temMap.put(segmentInformation.codeSourse, codeSource);
+				++i;
+	//			if(codeSource.equals("null"))
+			} else if(splitLine[i+1].endsWith(":")) {
+				String codeSource = splitLine[i] + " " + splitLine[i+1].substring(0,splitLine[i+1].length()-1);
+				temMap.put(segmentInformation.codeSourse, codeSource);
+				++i;  ++i;
+			} else {
+				Exception e = new Exception("程序名无法解析错误！");
+				throw e;
+			}
+		} catch(Exception e) {
+			throw e;
 		}
 		//剩余的部分是需要关注分类的代码内容段    codeContent
 		segment.setLength(0);

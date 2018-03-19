@@ -130,16 +130,16 @@ public class TestCaseNewOne {
 		System.out.println(fr.getPatternNum());
 	}
 	
-//	@Test  //测试时间戳和时间转化函数
+	@Test  //测试时间戳和时间转化函数
 	public void testTime() throws ParseException {
-		String fileName = "F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\secure-20170702";
+		String fileName = "F:\\DoctorContent\\log-related\\a日志分析程序\\Secure分类专用文件夹\\secure-20170709";
 //		String fileName = "C:\\Users\\dell\\Desktop\\secure\\secure-20170709";
 		FileRead fr = MethodNeededTest.getFileReadFromFileName(fileName);
 		logger.info("该文件一共有"+fr.getFileNum()+"条日志");
 		fr.getPattern(0.5,segmentInformation.codeContent, IdenticalWordRate.matchMethod.LCS2);
 //		System.out.println("生成模式成功");
 		//下面生成特征向量，同时写出一个文件
-		fr.GenerateFeatureVector("F:\\DoctorContent\\log-related\\a日志分析程序\\主成分分析日志\\statisticsTheData_secure", 300000);
+		fr.GenerateFeatureVector(null, 300000);
 		//下面写出文件模式
 		fr.writePattern(null);
 		//下面根据输入字符串的段位将对应的内容写到一个文件内
@@ -155,10 +155,10 @@ public class TestCaseNewOne {
 		fr.writeContentBySegment(null, segToWrite);
 	}
 	
-	@Test //根据当前文件夹位置生成持久化文件的函数
+//	@Test //根据当前文件夹位置生成持久化文件的函数
 	public void GenPerFun() {
 	    //输入文件夹！
-	    String fileName = "C:\\Users\\dell\\Desktop\\cron";
+	    String fileName = "C:\\Users\\dell\\Desktop\\secure";
 	    File file = new File(fileName);
 	    File[] fileArray=file.listFiles();
         if(fileArray!=null){

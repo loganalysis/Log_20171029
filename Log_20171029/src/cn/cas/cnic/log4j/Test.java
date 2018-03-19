@@ -24,9 +24,16 @@ public class Test {
 //        // 记录error级别的信息  
 //        logger.error("This is error message.");  
     	
-    	String a = "C:\\Users\\dell\\Desktop\\cron\\程序名_出现次数.xls";
-    	logger.debug(a.lastIndexOf("."));
+//    	String a = "C:\\Users\\dell\\Desktop\\cron\\程序名_出现次数.xls";
+//    	logger.debug(a.lastIndexOf("."));
+
+    	String s = "CROND[121]:";
+    	String codeSource = s.split("\\[")[0];
     	
+    	if(codeSource.endsWith(":"))
+    		codeSource = codeSource.substring(0,codeSource.length() - 1);
+    	String logSourchandContent = "crond (root) CMD (LANG=C LC_ALL=C /usr/bin/mrtg /etc/mrtg/mrtg.cfg --lock-file /var/lock/mrtg/mrtg_l --confcache-file /var/lib/mrtg/mrtg.ok)";
+    	logger.debug(logSourchandContent.substring(logSourchandContent.indexOf(" ")+1));
     }  
 
 }
