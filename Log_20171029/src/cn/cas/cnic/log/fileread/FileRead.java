@@ -153,7 +153,9 @@ public abstract class FileRead {
         
         if(fileName == null) {
             fileName = getFileName();
-            fileName += "-pattern.txt";
+            File temFile = new File(fileName); 
+            fileName += "_statisticsTheData" + File.separator + temFile.getName() + "-pattern.txt";
+            logger.debug("写入类型模式文件的文件名字是[ " + fileName + "]");
         }
         
         File file = new File(fileName);
@@ -206,11 +208,14 @@ public abstract class FileRead {
         Iterator<HashMap<segmentInformation,String>> iterator = _fileContent.iterator(); //对于LinkedList使用迭代器效率高
         if(fileName == null) {
             fileName = getFileName();
+            File temFile = new File(fileName); 
+            fileName += "_statisticsTheData" + File.separator + temFile.getName();
             for(segmentInformation seg : SI) {
                 fileName += "_";
                 fileName += seg.toString();
             }
             fileName += ".txt";
+            logger.debug("写入内容的文件名字是[ " + fileName + "]");
         }
         File file = new File(fileName);
         FileWriter fw = null;
@@ -261,12 +266,18 @@ public abstract class FileRead {
      * @throws ParseException 
      */
     public void GenerateFeatureVector(String fileName, long time) throws ParseException {
-        //第一步：写之前我先将日志模式按照时间排一下序
+//        for(int i = 0 ; i != _fileContent.size() ; ++i) {
+//        	String temStr = _fileContent.get(i).get(segmentInformation.timeStamp);
+//        	
+//        }
+//    	第一步：写之前我先将日志模式按照时间排一下序
         Collections.sort(_fileContent,new Comparator<HashMap<segmentInformation, String>>() {
             public int compare(HashMap<segmentInformation, String> left, HashMap<segmentInformation, String> right) {
-                Long leftLong = Long.valueOf(left.get(segmentInformation.timeStamp));
-                Long rightLong = Long.valueOf(right.get(segmentInformation.timeStamp));
-                return (int)(leftLong - rightLong);
+                String leftStr = left.get(segmentInformation.timeStamp);
+            	String rightStr = right.get(segmentInformation.timeStamp);
+            	int leftLong = Integer.parseInt(leftStr.substring(0, leftStr.length()-3));
+                int rightLong = Integer.parseInt(rightStr.substring(0, rightStr.length()-3));
+                return (leftLong - rightLong);
             }
         });
         logger.info("排序后文件数目："+_fileContent.size());
@@ -300,7 +311,8 @@ public abstract class FileRead {
         logger.info("一共有"+_inputMatirx.size()+"个向量"+"\t"+"一共有"+_logPatterns.size()+"个模式");
         //将向量写到指定的文件中
         String inputFileName = getFileName();
-        String VectorName = inputFileName +"VectorFile"+"_"+time/1000+"s_Vector";
+//        String VectorName = inputFileName +"VectorFile"+"_"+time/1000+"s_Vector";
+        String VectorName = inputFileName+"_statisticsTheData";
         if(fileName != null)
             VectorName = fileName;
         //如果没有文件夹，先新建一个文件夹
@@ -308,7 +320,7 @@ public abstract class FileRead {
         if (!dir.exists())
             dir.mkdir();
         //然后再将文件名加入
-        VectorName = VectorName + "\\" + "Vector_"+time/1000+"s.txt";
+        VectorName = VectorName + File.separator + "Vector_"+time/1000+"s.txt";
         logger.debug(VectorName);
         Iterator<double[]> iterator = _inputMatirx.iterator();
         double[] temWrite = new double[_logPatterns.size()];

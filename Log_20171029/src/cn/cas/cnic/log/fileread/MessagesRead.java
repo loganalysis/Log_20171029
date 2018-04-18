@@ -54,7 +54,7 @@ public class MessagesRead extends FileRead{
 			timeStamp = simpleDateFormat.parse(time11).getTime();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
 		
 //		System.out.println(String.valueOf(timeStamp));
